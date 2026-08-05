@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Egbert Vaz — Job Match Desk</title>
+<style>
+  :root {
+    --bg: #F3EEDF; --card: #FBF8F1; --ink: #22281F; --muted: #5C5647;
+    --line: #D9CFB4; --green: #3A7D5C; --amber: #C98A2E; --red: #B5533C;
+  }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); font-family: Arial, Helvetica, sans-serif; color:var(--ink); }
+  .wrap { max-width: 820px; margin: 0 auto; padding: 32px 16px 64px; }
+  h1 { font-family: Georgia, serif; font-size: 30px; margin: 4px 0 0; }
+  .eyebrow { text-transform: uppercase; letter-spacing: .15em; font-size: 11px; color:#8A8368; font-weight:bold; }
+  .sub { color: var(--muted); font-size: 14px; margin-top: 4px; }
+  header { display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:12px; }
+  .meta { font-size: 13px; color: var(--muted); margin-top: 10px; }
+  .filters { display:flex; gap:8px; flex-wrap:wrap; margin-top:16px; }
+  .chip { border:1px solid var(--line); background:transparent; color:var(--muted); border-radius:999px; padding:6px 12px; font-size:12px; font-weight:bold; cursor:pointer; }
+  .chip.active { background:var(--green); border-color:var(--green); color:#fff; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:10px; margin-top:14px; overflow:hidden; }
+  .card-head { display:flex; gap:14px; padding:16px; cursor:pointer; align-items:center; }
+  .card-head:hover { background:#F3EEDF; }
+  .dial { width:56px; height:56px; flex-shrink:0; }
+  .titlebar { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+  .titlebar h3 { font-family: Georgia, serif; margin:0; font-size:17px; }
+  .tag { font-size:10px; text-transform:uppercase; background:var(--green); color:#fff; border-radius:999px; padding:2px 8px; font-weight:bold; }
+  .subrow { color:var(--muted); font-size:13px; margin-top:4px; display:flex; gap:12px; flex-wrap:wrap; }
+  .body { border-top:1px solid var(--line); padding:16px; display:none; }
+  .body.open { display:block; }
+  .tabs { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:14px; }
+  .tab-btn { border:none; background:#EFE9D8; color:#4A4636; padding:6px 12px; border-radius:6px; font-size:12px; font-weight:bold; cursor:pointer; }
+  .tab-btn.active { background:var(--ink); color:#fff; }
+  .tabpane { display:none; }
+  .tabpane.active { display:block; }
+  .cols { display:grid; grid-template-columns: 1fr 1fr; gap:16px; }
+  @media (max-width:560px){ .cols{grid-template-columns:1fr;} }
+  ul.plain { list-style:none; padding:0; margin:0; font-size:14px; }
+  ul.plain li { margin-bottom:6px; }
+  .status-row { display:flex; gap:8px; align-items:center; margin-bottom:12px; flex-wrap:wrap; }
+  select, textarea, input { font-family:inherit; border:1px solid var(--line); border-radius:6px; padding:6px 8px; background:#fff; font-size:13px; }
+  textarea { width:100%; min-height:60px; resize:vertical; }
+  pre.letter { white-space:pre-wrap; background:#F3EEDF; padding:14px; border-radius:8px; font-size:13.5px; line-height:1.5; font-family:inherit; }
+  .btn { background:var(--ink); color:#fff; border:none; border-radius:6px; padding:7px 12px; font-size:12px; font-weight:bold; cursor:pointer; }
+  .btn.ghost { background:transparent; border:1px solid var(--line); color:var(--muted); }
+  a.src { color:var(--green); font-weight:bold; font-size:13px; text-decoration:none; }
+  .updated { font-size:12px; color:#8A8368; margin-top:6px; }
+  .empty { text-align:center; padding:40px 0; color:var(--muted); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <div class="eyebrow">Job Match Desk</div>
+      <h1>Egbert Vaz</h1>
+      <div class="sub">Talent Acquisition Specialist · 4+ yrs · Goa, India · Remote roles only</div>
+    </div>
+    <button class="btn" onclick="loadJobs(true)">↻ Reload data</button>
+  </header>
+  <div class="updated" id="updatedAt">Loading…</div>
+  <div class="filters" id="filters"></div>
+  <div id="jobList"></div>
+</div>
+
+<script>
+const RESUME_SKILLS = [
+  "full-cycle recruitment","sourcing","boolean search","x-ray search","linkedin recruiter",
+  "ats","workday","bamboohr","zoho recruit","job diva","dei","stakeholder management",
+  "employer branding","offer negotiation","onboarding","ai sourcing","us hiring","uk hiring",
+  "apac hiring","it recruitment","technical recruiting","screening","interviewing"
+];
+
+const CATEGORIES = ["All","Recruiter","Talent Acquisition","IT Recruiter","Sourcing Specialist","Recruitment Consultant"];
+let activeCategory = "All";
+let currentJobs = [];
+
+function scoreJob(job) {
+  const text = (job.title + " " + job.description).toLowerCase();
+  const hits = RESUME_SKILLS.filter(s => text.includes(s));
+  const base = Math.min(95, 45 + hits.length * 6);
+  return { score: base, hits };
+}
+
+function gapsAndPositives(job, hits) {
+  const positives = hits.slice(0,4).map(h => `Listing references "${h}" — matches your resume`);
+  if (positives.length === 0) positives.push("Title matches your target role family");
+  const missing = RESUME_SKILLS.filter(s => !hits.includes(s)).slice(0,3);
+  const gaps = missing.map(m => `No mention of "${m}" — consider surfacing it in your application anyway`);
+  return { positives, gaps };
+}
+
+function atsTips(job) {
+  return [
+    `Mirror this job's exact title ("${job.title}") somewhere in your resume summary`,
+    `Reference "${job.company}"-relevant scope (remote, cross-border, or niche hiring) in your top bullet`,
+    `Use full-cycle recruitment metrics (time-to-hire, offer-acceptance %) — ATS systems favor quantified bullets`,
+  ];
+}
+
+function coverLetter(job, variant) {
+  const base = `Dear Hiring Team,\n\nI'm writing to apply for the ${job.title} role at ${job.company}. Over the past four years I've run full-cycle recruitment across India, the UK, US, and APAC — sourcing, screening, negotiating offers, and closing roles across technical and non-technical functions, while cutting time-to-hire by 30% and improving offer-to-joining conversion to 67%. I'm skilled in Boolean/X-Ray search, LinkedIn Recruiter, and AI-assisted sourcing, and comfortable owning requisitions independently in a remote, cross-time-zone setting.`;
+  const variants = [
+    base + `\n\nI'd welcome the opportunity to bring that ownership to ${job.company}'s hiring.\n\nBest regards,\nEgbert Vaz`,
+    base + `\n\nWhat draws me to this role specifically is the chance to apply that experience to ${job.company}'s team, and I'd be glad to discuss how I can contribute.\n\nRegards,\nEgbert Vaz`,
+    base + `\n\nI'd appreciate the chance to talk through how my sourcing and closing track record could support ${job.company}'s current hiring goals.\n\nThank you,\nEgbert Vaz`,
+  ];
+  return variants[variant % variants.length];
+}
+
+function matchesCategory(job) {
+  if (activeCategory === "All") return true;
+  return job.title.toLowerCase().includes(activeCategory.toLowerCase().split(" ")[0]);
+}
+
+function renderFilters() {
+  const el = document.getElementById("filters");
+  el.innerHTML = "";
+  CATEGORIES.forEach(c => {
+    const b = document.createElement("button");
+    b.className = "chip" + (activeCategory === c ? " active" : "");
+    b.textContent = c;
+    b.onclick = () => { activeCategory = c; renderFilters(); renderJobs(); };
+    el.appendChild(b);
+  });
+}
+
+function saveJobMeta(id, patch) {
+  const key = "egbert-job-tracker";
+  const store = JSON.parse(localStorage.getItem(key) || "{}");
+  store[id] = { ...(store[id]||{}), ...patch };
+  localStorage.setItem(key, JSON.stringify(store));
+}
+function getJobMeta(id) {
+  const key = "egbert-job-tracker";
+  const store = JSON.parse(localStorage.getItem(key) || "{}");
+  return store[id] || { status: "New", notes: "" };
+}
+
+function dialSvg(score) {
+  const color = score >= 85 ? "#3A7D5C" : score >= 70 ? "#C98A2E" : "#B5533C";
+  const c = 2 * Math.PI * 22;
+  const offset = c - (score/100) * c;
+  return `<svg width="56" height="56" viewBox="0 0 56 56">
+    <circle cx="28" cy="28" r="22" fill="none" stroke="#E4DCC8" stroke-width="6"/>
+    <circle cx="28" cy="28" r="22" fill="none" stroke="${color}" stroke-width="6"
+      stroke-dasharray="${c}" stroke-dashoffset="${offset}" stroke-linecap="round"
+      transform="rotate(-90 28 28)"/>
+    <text x="28" y="32" text-anchor="middle" font-size="13" font-weight="bold" fill="${color}" font-family="Georgia, serif">${score}</text>
+  </svg>`;
+}
+
+function renderJobs() {
+  const listEl = document.getElementById("jobList");
+  const filtered = currentJobs.filter(matchesCategory);
+  if (filtered.length === 0) {
+    listEl.innerHTML = `<div class="empty">No postings in this category right now. Check back after the next hourly refresh.</div>`;
+    return;
+  }
+  listEl.innerHTML = "";
+  filtered.forEach((job, idx) => {
+    const { score, hits } = scoreJob(job);
+    const { positives, gaps } = gapsAndPositives(job, hits);
+    const meta = getJobMeta(job.id);
+    const card = document.createElement("div");
+    card.className = "card";
+    const linkedinUrl = `https://www.linkedin.com/search/results/people/?keywords=${encodeURIComponent(job.company + " talent acquisition")}`;
+    card.innerHTML = `
+      <div class="card-head" onclick="this.nextElementSibling.classList.toggle('open')">
+        <div class="dial">${dialSvg(score)}</div>
+        <div style="flex:1">
+          <div class="titlebar"><h3>${job.title}</h3><span class="tag">Remote</span></div>
+          <div class="subrow">
+            <span><b>${job.company}</b></span>
+            <span>${job.location || "Remote"}</span>
+            <span>${job.postedAt ? new Date(job.postedAt).toLocaleDateString() : "date unknown — verify on source"}</span>
+            <span>via ${job.source}</span>
+          </div>
+        </div>
+      </div>
+      <div class="body">
+        <div class="status-row">
+          <label style="font-size:13px;color:var(--muted)">Status:</label>
+          <select onchange="saveJobMeta('${job.id}', {status:this.value})">
+            ${["New","Saved","Applied","Interviewing","Rejected"].map(s =>
+              `<option value="${s}" ${meta.status===s?"selected":""}>${s}</option>`).join("")}
+          </select>
+          <a class="src" href="${job.url}" target="_blank" rel="noopener">View source listing ↗</a>
+        </div>
+        <div class="tabs">
+          <button class="tab-btn active" data-tab="overview">Overview</button>
+          <button class="tab-btn" data-tab="match">Match Rating</button>
+          <button class="tab-btn" data-tab="letter">Cover Letter</button>
+          <button class="tab-btn" data-tab="ats">ATS Tips</button>
+          <button class="tab-btn" data-tab="contacts">Contacts</button>
+          <button class="tab-btn" data-tab="notes">Notes</button>
+        </div>
+        <div class="tabpane active" data-pane="overview">
+          <p style="font-size:14px;line-height:1.5">${(job.description || "No description available.").slice(0,500)}${job.description && job.description.length>500 ? "…" : ""}</p>
+        </div>
+        <div class="tabpane" data-pane="match">
+          <div class="cols">
+            <div>
+              <b style="color:var(--green);font-size:13px">✓ What matches</b>
+              <ul class="plain">${positives.map(p=>`<li>+ ${p}</li>`).join("")}</ul>
+            </div>
+            <div>
+              <b style="color:var(--red);font-size:13px">✗ Gaps</b>
+              <ul class="plain">${gaps.map(g=>`<li>− ${g}</li>`).join("")}</ul>
+            </div>
+          </div>
+        </div>
+        <div class="tabpane" data-pane="letter">
+          <div style="display:flex;justify-content:space-between;margin-bottom:8px">
+            <span style="font-size:11px;color:#8A8368;font-weight:bold">VARIANT <span class="vnum">1</span> OF 3</span>
+            <div>
+              <button class="btn ghost regen">↻ Regenerate</button>
+              <button class="btn ghost copy">Copy</button>
+            </div>
+          </div>
+          <pre class="letter">${coverLetter(job,0)}</pre>
+        </div>
+        <div class="tabpane" data-pane="ats">
+          <ul class="plain">${atsTips(job).map(t=>`<li>→ ${t}</li>`).join("")}</ul>
+        </div>
+        <div class="tabpane" data-pane="contacts">
+          <p style="font-size:13px;color:var(--muted)">No fabricated names or emails — search LinkedIn directly for real recruiters at ${job.company}:</p>
+          <a class="btn" href="${linkedinUrl}" target="_blank" rel="noopener" style="text-decoration:none;display:inline-block">Search "${job.company}" on LinkedIn</a>
+        </div>
+        <div class="tabpane" data-pane="notes">
+          <textarea placeholder="Notes — who you contacted, interview dates, follow-ups…" onchange="saveJobMeta('${job.id}', {notes:this.value})">${meta.notes || ""}</textarea>
+        </div>
+      </div>`;
+
+    // tab wiring
+    const tabBtns = card.querySelectorAll(".tab-btn");
+    const panes = card.querySelectorAll(".tabpane");
+    tabBtns.forEach(btn => btn.addEventListener("click", () => {
+      tabBtns.forEach(b=>b.classList.remove("active"));
+      panes.forEach(p=>p.classList.remove("active"));
+      btn.classList.add("active");
+      card.querySelector(`[data-pane="${btn.dataset.tab}"]`).classList.add("active");
+    }));
+
+    // cover letter regenerate/copy
+    let vi = 0;
+    const letterPre = card.querySelector(".letter");
+    const vnum = card.querySelector(".vnum");
+    card.querySelector(".regen").addEventListener("click", () => {
+      vi = (vi + 1) % 3;
+      letterPre.textContent = coverLetter(job, vi);
+      vnum.textContent = vi + 1;
+    });
+    card.querySelector(".copy").addEventListener("click", () => {
+      navigator.clipboard?.writeText(letterPre.textContent);
+    });
+
+    listEl.appendChild(card);
+  });
+}
+
+async function loadJobs(manual) {
+  document.getElementById("updatedAt").textContent = "Loading…";
+  try {
+    const res = await fetch("./jobs.json?_=" + Date.now());
+    const data = await res.json();
+    currentJobs = data.jobs || [];
+    document.getElementById("updatedAt").textContent =
+      `Last refreshed: ${new Date(data.updatedAt).toLocaleString()} · ${currentJobs.length} matching postings · auto-refreshes hourly via GitHub Actions`;
+    renderJobs();
+  } catch (e) {
+    document.getElementById("updatedAt").textContent = "Could not load jobs.json yet — the first hourly run will create it.";
+    currentJobs = [];
+    renderJobs();
+  }
+}
+
+renderFilters();
+loadJobs();
+</script>
+</body>
+</html>
