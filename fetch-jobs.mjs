@@ -16,6 +16,7 @@ const EXCLUDE_LOCATION_PATTERNS = [
 ];
 
 const REMOTE_SIGNAL = /(remote|work[\s-]?from[\s-]?home|\bwfh\b|virtual|telecommute|anywhere)/i;
+const HYBRID_ONSITE_SIGNAL = /(hybrid|on-site|onsite|in-office|in office|work from office|\bwfo\b)/i;
 
 function titleMatches(title = "") {
   const t = title.toLowerCase();
@@ -24,13 +25,10 @@ function titleMatches(title = "") {
 function locationLooksOk(locationStr = "") {
   return !EXCLUDE_LOCATION_PATTERNS.some((re) => re.test(locationStr));
 }
-const HYBRID_ONSITE_SIGNAL = /(hybrid|on-site|onsite|in-office|in office|work from office|\bwfo\b)/i;
-
 function isActuallyRemote(job) {
   const text = `${job.title} ${job.location || ""} ${job.description || ""}`;
   if (HYBRID_ONSITE_SIGNAL.test(text)) return false;
   return REMOTE_SIGNAL.test(job.title) || REMOTE_SIGNAL.test(job.location || "") || REMOTE_SIGNAL.test(job.description || "");
-}
 }
 function withinLastWeek(dateStr) {
   if (!dateStr) return true;
@@ -113,7 +111,7 @@ async function fetchAdzuna() {
   const queries = ["recruiter", "talent acquisition", "sourcing specialist"];
   for (const q of queries) {
     try {
-const url = `https://api.adzuna.com/v1/api/jobs/in/search/1?app_id=${ADZUNA_APP_ID}&app_key=${ADZUNA_APP_KEY}&what=${encodeURIComponent(q)}&results_per_page=30&max_days_old=7&content-type=application/json`;
+      const url = `https://api.adzuna.com/v1/api/jobs/in/search/1?app_id=${ADZUNA_APP_ID}&app_key=${ADZUNA_APP_KEY}&what=${encodeURIComponent(q)}&results_per_page=30&max_days_old=7&content-type=application/json`;
       const res = await fetch(url);
       const data = await res.json();
       for (const j of data.results || []) {
