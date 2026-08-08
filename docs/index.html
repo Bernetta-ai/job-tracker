@@ -599,7 +599,8 @@ function createJobCard(job, idx, seen) {
             <p class="desc-text short-desc">${shortDesc}</p>
             <p class="desc-text full-desc" style="display:none">${fullDesc}</p>
             ${isLong ? `<button class="readmore-btn">Read more ↓</button>` : ""}
-            ${job.source === "Adzuna" || job.source === "Jooble" ? `<p class="resume-note" style="margin-top:10px">${job.source} sometimes only provides a shortened snippet through its API, not the full posting — this is everything available without visiting the source. Use "View source" above for the complete listing.</p>` : ""}
+            ${(job.source === "Adzuna" || job.source === "Jooble") && !job.descriptionExtracted ? `<p class="resume-note" style="margin-top:10px">${job.source} only provided a shortened snippet via its API, and I couldn't pull the full text from the source page either (it may be a JS-heavy page or currently unreachable) — this is everything available. Use "View source" above for the complete listing.</p>` : ""}
+            ${job.descriptionExtracted ? `<p class="resume-note" style="margin-top:10px">Full text pulled directly from the source posting, not just ${job.source}'s API snippet.</p>` : ""}
           </div>
         </div>
 
