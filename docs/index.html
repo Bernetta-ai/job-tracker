@@ -3,101 +3,189 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Egbert Vaz — Job Match Desk</title>
+<title>Egbert Vaz — Job Desk</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #F3EEDF; --card: #FBF8F1; --ink: #22281F; --muted: #5C5647;
-    --line: #D9CFB4; --green: #3A7D5C; --amber: #C98A2E; --red: #B5533C;
+    --bg: #F2F4FA; --card: #FFFFFF; --border: #E7EAF3;
+    --ink: #111214; --ink-soft: rgba(17,18,20,0.56); --ink-faint: rgba(17,18,20,0.36);
+    --blue: #3B6FF0; --blue-tint: #EAF0FF; --teal: #1FB894; --teal-tint: #E5F8F3;
+    --purple: #8B7FF0; --purple-tint: #EFEDFF; --amber-tint: #FFF3DD; --coral-tint: #FFE9EE;
   }
   * { box-sizing: border-box; }
-  body { margin:0; background:var(--bg); font-family: Arial, Helvetica, sans-serif; color:var(--ink); }
-  .wrap { max-width: 820px; margin: 0 auto; padding: 32px 16px 64px; }
-  h1 { font-family: Georgia, serif; font-size: 30px; margin: 4px 0 0; }
-  .eyebrow { text-transform: uppercase; letter-spacing: .15em; font-size: 11px; color:#8A8368; font-weight:bold; }
-  .sub { color: var(--muted); font-size: 14px; margin-top: 4px; }
-  header { display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:12px; }
-  .meta { font-size: 13px; color: var(--muted); margin-top: 10px; }
-  .filters { display:flex; gap:8px; flex-wrap:wrap; margin-top:16px; }
-  .chip { border:1px solid var(--line); background:transparent; color:var(--muted); border-radius:999px; padding:6px 12px; font-size:12px; font-weight:bold; cursor:pointer; }
-  .chip.active { background:var(--green); border-color:var(--green); color:#fff; }
-  .card { background:var(--card); border:1px solid var(--line); border-radius:10px; margin-top:14px; overflow:hidden; }
-  .card-head { display:flex; gap:14px; padding:16px; cursor:pointer; align-items:center; }
-  .card-head:hover { background:#F3EEDF; }
-  .dial { width:56px; height:56px; flex-shrink:0; }
-  .titlebar { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
-  .titlebar h3 { font-family: Georgia, serif; margin:0; font-size:17px; }
-  .tag { font-size:10px; text-transform:uppercase; background:var(--green); color:#fff; border-radius:999px; padding:2px 8px; font-weight:bold; }
-  .subrow { color:var(--muted); font-size:13px; margin-top:4px; display:flex; gap:12px; flex-wrap:wrap; }
-  .body { border-top:1px solid var(--line); padding:16px; display:none; }
+  body { margin:0; background: var(--bg); color: var(--ink); font-family: 'Inter', sans-serif; }
+  .wrap { max-width: 900px; margin: 0 auto; padding: 32px 18px 80px; }
+  header { display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:16px; }
+  .eyebrow { font-size: 12px; font-weight:600; color: var(--ink-faint); text-transform:uppercase; letter-spacing:0.08em; }
+  h1 { font-size: 28px; font-weight: 800; margin: 4px 0 2px; letter-spacing:-0.01em; }
+  .sub { color: var(--ink-soft); font-size: 14px; font-weight:500; }
+  .meta { font-size: 12.5px; color: var(--ink-faint); margin-top: 8px; }
+  .reload-btn { background: var(--blue); color:#fff; border:none; border-radius: 12px; padding: 11px 18px; font-weight:700; font-size: 13.5px; cursor:pointer; box-shadow: 0 8px 18px -8px rgba(59,111,240,0.55); }
+  .tiles { display:grid; grid-template-columns: repeat(3, 1fr); gap:14px; margin-top:24px; }
+  @media (max-width:640px){ .tiles{ grid-template-columns:1fr; } }
+  .tile { border-radius: 18px; padding: 18px; }
+  .tile.blue { background: var(--blue-tint); } .tile.teal { background: var(--teal-tint); } .tile.purple { background: var(--purple-tint); }
+  .tile-label { font-weight:700; font-size: 14px; } .tile-sub { font-size: 12px; color: var(--ink-soft); margin-top:2px; }
+  .tile-ring { width:52px; height:52px; margin-top: 14px; } .tile-num { font-size: 26px; font-weight:800; margin-top: 14px; }
+  .filters { display:flex; gap:8px; margin-top: 26px; flex-wrap: wrap; }
+  .chip { font-size: 12.5px; font-weight:600; padding: 8px 14px; border-radius: 999px; border: 1px solid var(--border); background: #fff; color: var(--ink-soft); cursor:pointer; }
+  .chip.active { background: var(--ink); border-color: var(--ink); color: #fff; }
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 18px; margin-top: 14px; overflow: hidden; box-shadow: 0 1px 2px rgba(17,18,20,0.04); }
+  .card-head { display:flex; gap:16px; padding: 18px; cursor:pointer; align-items:center; }
+  .card-head:hover { background: #FAFBFD; }
+  .avatar-wrap { width:46px; height:46px; border-radius:14px; flex-shrink:0; position:relative; background: var(--blue-tint); overflow:hidden; }
+  .avatar-wrap.c1 { background: var(--teal-tint); } .avatar-wrap.c2 { background: var(--purple-tint); }
+  .avatar-wrap img { width:100%; height:100%; object-fit:contain; padding:6px; }
+  .avatar-letter { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:17px; color: var(--ink); }
+  .titlebar { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+  .titlebar h3 { font-size:16px; font-weight:800; margin:0; }
+  .tag { font-size: 10.5px; font-weight:700; text-transform:uppercase; letter-spacing:0.04em; background: var(--teal-tint); color: var(--ink); border-radius:999px; padding: 3px 10px; }
+  .subrow { color: var(--ink-soft); font-size: 13px; margin-top: 5px; display:flex; gap:12px; flex-wrap:wrap; font-weight:500; }
+  .subrow b { color: var(--ink); font-weight:700; }
+  .gauge-mini { width:44px; height:44px; flex-shrink:0; position:relative; }
+  .gauge-mini-num { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:12.5px; }
+  .chev { color: var(--ink-faint); flex-shrink:0; font-weight:700; }
+  .body { border-top: 1px solid var(--border); padding: 18px; display:none; }
   .body.open { display:block; }
-  .tabs { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:14px; }
-  .tab-btn { border:none; background:#EFE9D8; color:#4A4636; padding:6px 12px; border-radius:6px; font-size:12px; font-weight:bold; cursor:pointer; }
-  .tab-btn.active { background:var(--ink); color:#fff; }
-  .tabpane { display:none; }
-  .tabpane.active { display:block; }
-  .cols { display:grid; grid-template-columns: 1fr 1fr; gap:16px; }
-  @media (max-width:560px){ .cols{grid-template-columns:1fr;} }
-  ul.plain { list-style:none; padding:0; margin:0; font-size:14px; }
-  ul.plain li { margin-bottom:6px; }
-  .status-row { display:flex; gap:8px; align-items:center; margin-bottom:12px; flex-wrap:wrap; }
-  select, textarea, input { font-family:inherit; border:1px solid var(--line); border-radius:6px; padding:6px 8px; background:#fff; font-size:13px; }
-  textarea { width:100%; min-height:60px; resize:vertical; }
-  pre.letter { white-space:pre-wrap; background:#F3EEDF; padding:14px; border-radius:8px; font-size:13.5px; line-height:1.5; font-family:inherit; }
-  .btn { background:var(--ink); color:#fff; border:none; border-radius:6px; padding:7px 12px; font-size:12px; font-weight:bold; cursor:pointer; }
-  .btn.ghost { background:transparent; border:1px solid var(--line); color:var(--muted); }
-  a.src { color:var(--green); font-weight:bold; font-size:13px; text-decoration:none; }
-  .updated { font-size:12px; color:#8A8368; margin-top:6px; }
-  .empty { text-align:center; padding:40px 0; color:var(--muted); }
+  .status-row { display:flex; gap:10px; align-items:center; margin-bottom:16px; flex-wrap:wrap; }
+  select, textarea { font-family: 'Inter', sans-serif; border: 1px solid var(--border); border-radius:10px; padding: 8px 11px; background: #fff; color: var(--ink); font-size: 13px; font-weight:500; }
+  textarea { width:100%; min-height:70px; resize:vertical; }
+  .tabs { display:flex; gap:6px; flex-wrap:wrap; margin-bottom: 16px; }
+  .tab-btn { border:none; background: var(--bg); color: var(--ink-soft); padding: 7px 14px; border-radius: 10px; font-size: 12.5px; font-weight:700; cursor:pointer; }
+  .tab-btn.active { background: var(--ink); color:#fff; }
+  .tabpane { display:none; } .tabpane.active { display:block; }
+  .desc-text { font-size: 14.5px; line-height: 1.65; color: var(--ink-soft); font-weight:500; }
+  .readmore-btn { background: var(--blue-tint); border:none; color: var(--ink); font-weight:700; font-size: 12.5px; cursor:pointer; margin-top:12px; padding:7px 13px; border-radius:999px; }
+  .cols { display:grid; grid-template-columns: 1fr 1fr; gap:20px; } @media (max-width:560px){ .cols{grid-template-columns:1fr;} }
+  ul.plain { list-style:none; padding:0; margin:0; font-size:13.5px; line-height:1.7; font-weight:500; }
+  ul.plain li { margin-bottom:10px; padding-left:20px; position:relative; }
+  ul.plain.pos li::before { content:""; position:absolute; left:0; top:7px; width:8px; height:8px; border-radius:2px; background: var(--teal); }
+  ul.plain.gap li::before { content:""; position:absolute; left:0; top:7px; width:8px; height:8px; border-radius:2px; background: var(--coral-tint); border:1px solid #E893A6; }
+  .section-label { font-size:12.5px; font-weight:800; margin-bottom:10px; display:block; }
+  pre.letter { white-space: pre-wrap; background: var(--bg); border:1px solid var(--border); padding:16px; border-radius:14px; font-size: 13.5px; line-height:1.6; font-family:'Inter', sans-serif; font-weight:500; }
+  .btn { background: var(--ink); color:#fff; border:none; border-radius:10px; padding:8px 14px; font-size:12.5px; font-weight:700; cursor:pointer; }
+  .btn.ghost { background: var(--bg); color: var(--ink); }
+  .link-row { display:flex; gap:8px; flex-wrap:wrap; }
+  a.src-link { color: var(--ink); font-weight:700; font-size:13px; text-decoration:none; background: var(--blue-tint); padding:6px 12px; border-radius:999px; }
+  a.fallback-link { color: var(--ink); font-weight:700; font-size:13px; text-decoration:none; background: var(--bg); border: 1px solid var(--border); padding:6px 12px; border-radius:999px; }
+  .empty { text-align:center; padding:70px 20px; color: var(--ink-soft); font-weight:500; }
 </style>
 </head>
 <body>
 <div class="wrap">
   <header>
     <div>
-      <div class="eyebrow">Job Match Desk</div>
-      <h1>Egbert Vaz</h1>
-      <div class="sub">Talent Acquisition Specialist · 4+ yrs · Goa, India · Remote roles only</div>
+      <div class="eyebrow">Job Desk</div>
+      <h1>Good hunting, Egbert</h1>
+      <div class="sub">Talent Acquisition Specialist · 4+ yrs · Goa, India · Remote only</div>
+      <div class="meta" id="updatedAt">syncing…</div>
     </div>
-    <button class="btn" onclick="loadJobs(true)">↻ Reload data</button>
+    <button class="reload-btn" onclick="loadJobs(true)">↻ Reload feed</button>
   </header>
-  <div class="updated" id="updatedAt">Loading…</div>
+
+  <div class="tiles">
+    <div class="tile blue">
+      <div class="tile-label">New signals</div>
+      <div class="tile-sub">this week</div>
+      <div class="tile-num" id="tileNewNum">–</div>
+    </div>
+    <div class="tile teal">
+      <div class="tile-label">Applied</div>
+      <div class="tile-sub" id="tileAppliedSub">of total tracked</div>
+      <div class="tile-num" id="tileAppliedNum">–</div>
+    </div>
+    <div class="tile purple">
+      <div class="tile-label">Avg match</div>
+      <div class="tile-sub">across current feed</div>
+      <svg class="tile-ring" viewBox="0 0 52 52">
+        <circle cx="26" cy="26" r="21" fill="none" stroke="#DCD8FB" stroke-width="6"/>
+        <circle cx="26" cy="26" r="21" fill="none" stroke="#8B7FF0" stroke-width="6" stroke-linecap="round" id="avgRingFg" transform="rotate(-90 26 26)"/>
+      </svg>
+    </div>
+  </div>
+
   <div class="filters" id="filters"></div>
   <div id="jobList"></div>
 </div>
 
 <script>
-const RESUME_SKILLS = [
-  "full-cycle recruitment","sourcing","boolean search","x-ray search","linkedin recruiter",
-  "ats","workday","bamboohr","zoho recruit","job diva","dei","stakeholder management",
-  "employer branding","offer negotiation","onboarding","ai sourcing","us hiring","uk hiring",
-  "apac hiring","it recruitment","technical recruiting","screening","interviewing"
+// Broader taxonomy: canonical label -> list of phrase variants to search for.
+// This fixes the old bug where a short fixed list produced identical gaps on every card.
+const SKILL_TAXONOMY = [
+  { label: "full-cycle recruitment", variants: ["full-cycle recruit", "full cycle recruit", "end-to-end recruit", "end to end recruit"] },
+  { label: "sourcing", variants: ["sourcing", "sourced", "talent mapping", "candidate pipeline"] },
+  { label: "Boolean / X-Ray search", variants: ["boolean", "x-ray search", "xray search"] },
+  { label: "LinkedIn Recruiter", variants: ["linkedin recruiter", "linkedin"] },
+  { label: "ATS tools", variants: ["ats", "applicant tracking", "workday", "greenhouse", "bamboohr", "zoho recruit", "job diva", "lever"] },
+  { label: "screening & interviewing", variants: ["screening", "interviewing", "interview calls", "phone interview", "video interview"] },
+  { label: "offer negotiation", variants: ["offer negotiation", "negotiat", "offer management"] },
+  { label: "onboarding", variants: ["onboarding", "onboard"] },
+  { label: "stakeholder management", variants: ["stakeholder", "hiring manager", "business partner"] },
+  { label: "DEI hiring", variants: ["dei", "diversity", "inclusion", "equity"] },
+  { label: "employer branding", variants: ["employer brand", "talent brand"] },
+  { label: "international hiring (US/UK/APAC)", variants: ["us hiring", "uk hiring", "apac", "international recruit", "global hiring", "cross-border"] },
+  { label: "technical / IT recruiting", variants: ["technical recruit", "it recruit", "tech hiring", "engineering hiring"] },
+  { label: "industry / market mapping", variants: ["industry mapping", "market mapping", "competitor mapping", "talent market"] },
+  { label: "high-volume / bulk hiring", variants: ["high-volume", "high volume", "bulk hiring", "mass hiring"] },
+  { label: "recruitment analytics", variants: ["analytics", "metrics", "time-to-hire", "time to hire", "reporting"] },
 ];
 
 const CATEGORIES = ["All","Recruiter","Talent Acquisition","IT Recruiter","Sourcing Specialist","Recruitment Consultant"];
 let activeCategory = "All";
 let currentJobs = [];
+const AVATAR_CLASSES = ["", "c1", "c2"];
+// Simple deterministic hash so gap ordering varies per job instead of always
+// showing the same first N items from a fixed list.
+function hashStr(s) {
+  let h = 0;
+  for (let i = 0; i < s.length; i++) { h = (h * 31 + s.charCodeAt(i)) >>> 0; }
+  return h;
+}
+function seededShuffle(arr, seed) {
+  const a = [...arr];
+  let s = seed;
+  for (let i = a.length - 1; i > 0; i--) {
+    s = (s * 1103515245 + 12345) >>> 0;
+    const j = s % (i + 1);
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
 
-function scoreJob(job) {
+function analyzeJob(job) {
   const text = (job.title + " " + job.description).toLowerCase();
-  const hits = RESUME_SKILLS.filter(s => text.includes(s));
-  const base = Math.min(95, 45 + hits.length * 6);
-  return { score: base, hits };
+  const matched = [];
+  const unmatched = [];
+  for (const skill of SKILL_TAXONOMY) {
+    const hitVariant = skill.variants.find(v => text.includes(v));
+    if (hitVariant) {
+      const idx = text.indexOf(hitVariant);
+      const start = Math.max(0, idx - 35);
+      const end = Math.min(text.length, idx + hitVariant.length + 45);
+      let snippet = job.description ? job.description.slice(start, end).trim() : "";
+      snippet = snippet.replace(/\s+/g, " ");
+      matched.push({ label: skill.label, snippet });
+    } else {
+      unmatched.push(skill.label);
+    }
+  }
+  const score = Math.min(96, 42 + matched.length * 5);
+  const shuffledGaps = seededShuffle(unmatched, hashStr(job.id || job.title));
+  return { score, matched, gaps: shuffledGaps.slice(0, 4) };
 }
 
-function gapsAndPositives(job, hits) {
-  const positives = hits.slice(0,4).map(h => `Listing references "${h}" — matches your resume`);
-  if (positives.length === 0) positives.push("Title matches your target role family");
-  const missing = RESUME_SKILLS.filter(s => !hits.includes(s)).slice(0,3);
-  const gaps = missing.map(m => `No mention of "${m}" — consider surfacing it in your application anyway`);
-  return { positives, gaps };
-}
-
-function atsTips(job) {
-  return [
+function atsTips(job, matched) {
+  const tips = [
     `Mirror this job's exact title ("${job.title}") somewhere in your resume summary`,
     `Reference "${job.company}"-relevant scope (remote, cross-border, or niche hiring) in your top bullet`,
-    `Use full-cycle recruitment metrics (time-to-hire, offer-acceptance %) — ATS systems favor quantified bullets`,
   ];
+  if (matched.length) {
+    tips.push(`This listing emphasizes ${matched.slice(0,2).map(m=>m.label).join(" and ")} — lead with those in your top 2 bullets`);
+  } else {
+    tips.push(`Use full-cycle recruitment metrics (time-to-hire, offer-acceptance %) — ATS systems favor quantified bullets`);
+  }
+  return tips;
 }
 
 function coverLetter(job, variant) {
@@ -132,6 +220,7 @@ function saveJobMeta(id, patch) {
   const store = JSON.parse(localStorage.getItem(key) || "{}");
   store[id] = { ...(store[id]||{}), ...patch };
   localStorage.setItem(key, JSON.stringify(store));
+  updateTiles();
 }
 function getJobMeta(id) {
   const key = "egbert-job-tracker";
@@ -139,94 +228,138 @@ function getJobMeta(id) {
   return store[id] || { status: "New", notes: "" };
 }
 
-function dialSvg(score) {
-  const color = score >= 85 ? "#3A7D5C" : score >= 70 ? "#C98A2E" : "#B5533C";
-  const c = 2 * Math.PI * 22;
+function updateTiles() {
+  document.getElementById("tileNewNum").textContent = currentJobs.length;
+  const store = JSON.parse(localStorage.getItem("egbert-job-tracker") || "{}");
+  const appliedCount = Object.values(store).filter(v => v.status === "Applied" || v.status === "Interviewing").length;
+  document.getElementById("tileAppliedNum").textContent = appliedCount;
+  document.getElementById("tileAppliedSub").textContent = `of ${currentJobs.length} tracked`;
+  const scores = currentJobs.map(j => analyzeJob(j).score);
+  const avg = scores.length ? Math.round(scores.reduce((a,b)=>a+b,0)/scores.length) : 0;
+  const c = 2 * Math.PI * 21;
+  const ring = document.getElementById("avgRingFg");
+  ring.setAttribute("stroke-dasharray", c);
+  ring.setAttribute("stroke-dashoffset", c - (avg/100) * c);
+}
+
+function gaugeSvg(score) {
+  const color = score >= 80 ? "#1FB894" : score >= 60 ? "#D8A93B" : "#E8607A";
+  const c = 2 * Math.PI * 18;
   const offset = c - (score/100) * c;
-  return `<svg width="56" height="56" viewBox="0 0 56 56">
-    <circle cx="28" cy="28" r="22" fill="none" stroke="#E4DCC8" stroke-width="6"/>
-    <circle cx="28" cy="28" r="22" fill="none" stroke="${color}" stroke-width="6"
-      stroke-dasharray="${c}" stroke-dashoffset="${offset}" stroke-linecap="round"
-      transform="rotate(-90 28 28)"/>
-    <text x="28" y="32" text-anchor="middle" font-size="13" font-weight="bold" fill="${color}" font-family="Georgia, serif">${score}</text>
+  return `<svg width="44" height="44" viewBox="0 0 44 44">
+    <circle cx="22" cy="22" r="18" fill="none" stroke="#EEF0F6" stroke-width="5"/>
+    <circle cx="22" cy="22" r="18" fill="none" stroke="${color}" stroke-width="5"
+      stroke-dasharray="${c}" stroke-dashoffset="${offset}" stroke-linecap="round" transform="rotate(-90 22 22)"/>
   </svg>`;
+}
+
+function guessDomain(company) {
+  if (!company) return null;
+  const stripWords = ["private","limited","pvt","ltd","inc","llc","llp","group","solutions","consultants","consulting","technologies","technology","services","india","global"];
+  let name = company.toLowerCase();
+  stripWords.forEach(w => { name = name.replace(new RegExp(`\\b${w}\\b`, "g"), ""); });
+  name = name.replace(/[^a-z0-9]/g, "").trim();
+  if (!name) return null;
+  return `${name}.com`;
 }
 
 function renderJobs() {
   const listEl = document.getElementById("jobList");
   const filtered = currentJobs.filter(matchesCategory);
+  updateTiles();
   if (filtered.length === 0) {
-    listEl.innerHTML = `<div class="empty">No postings in this category right now. Check back after the next hourly refresh.</div>`;
+    listEl.innerHTML = `<div class="empty">Nothing in this category right now. The feed checks again next hour.</div>`;
     return;
   }
   listEl.innerHTML = "";
   filtered.forEach((job, idx) => {
-    const { score, hits } = scoreJob(job);
-    const { positives, gaps } = gapsAndPositives(job, hits);
+    const { score, matched, gaps } = analyzeJob(job);
     const meta = getJobMeta(job.id);
     const card = document.createElement("div");
     card.className = "card";
     const linkedinUrl = `https://www.linkedin.com/search/results/people/?keywords=${encodeURIComponent(job.company + " talent acquisition")}`;
+    const googleFallback = `https://www.google.com/search?q=${encodeURIComponent('"' + job.title + '" "' + job.company + '" job')}`;
+    const fullDesc = job.description || "No description available.";
+    const isLong = fullDesc.length > 420;
+    const shortDesc = isLong ? fullDesc.slice(0, 420) + "…" : fullDesc;
+    const initial = (job.company || "?").trim().charAt(0).toUpperCase();
+    const avatarClass = AVATAR_CLASSES[idx % 3];
+    const domain = guessDomain(job.company);
+    const logoUrl = domain ? `https://logo.clearbit.com/${domain}` : null;
+
+    const positivesHtml = matched.length
+      ? matched.slice(0,4).map(m => `<li><b>${m.label}</b>${m.snippet ? ` — "…${m.snippet}…"` : ""}</li>`).join("")
+      : `<li>No strong keyword overlap detected — this may be a stretch role or the description is thin. Worth a closer manual read before applying.</li>`;
+    const gapsHtml = gaps.length
+      ? gaps.map(g => `<li>${g}</li>`).join("")
+      : `<li>No notable gaps — strong overlap with your resume.</li>`;
+
     card.innerHTML = `
       <div class="card-head" onclick="this.nextElementSibling.classList.toggle('open')">
-        <div class="dial">${dialSvg(score)}</div>
-        <div style="flex:1">
+        <div class="avatar-wrap ${avatarClass}">
+          <div class="avatar-letter">${initial}</div>
+          ${logoUrl ? `<img src="${logoUrl}" alt="" onerror="this.remove()" />` : ""}
+        </div>
+        <div style="flex:1; min-width:0">
           <div class="titlebar"><h3>${job.title}</h3><span class="tag">Remote</span></div>
           <div class="subrow">
             <span><b>${job.company}</b></span>
             <span>${job.location || "Remote"}</span>
-            <span>${job.postedAt ? new Date(job.postedAt).toLocaleDateString() : "date unknown — verify on source"}</span>
-            <span>via ${job.source}</span>
+            <span>${job.postedAt ? new Date(job.postedAt).toLocaleDateString() : "date unverified"} · ${job.source}</span>
           </div>
         </div>
+        <div class="gauge-mini">${gaugeSvg(score)}<div class="gauge-mini-num">${score}</div></div>
+        <span class="chev">▾</span>
       </div>
       <div class="body">
         <div class="status-row">
-          <label style="font-size:13px;color:var(--muted)">Status:</label>
+          <label style="font-size:12px;color:var(--ink-soft);font-weight:700">Status</label>
           <select onchange="saveJobMeta('${job.id}', {status:this.value})">
             ${["New","Saved","Applied","Interviewing","Rejected"].map(s =>
               `<option value="${s}" ${meta.status===s?"selected":""}>${s}</option>`).join("")}
           </select>
-          <a class="src" href="${job.url}" target="_blank" rel="noopener">View source listing ↗</a>
+          <div class="link-row">
+            <a class="src-link" href="${job.url}" target="_blank" rel="noopener">View source ↗</a>
+            <a class="fallback-link" href="${googleFallback}" target="_blank" rel="noopener">If that fails, search it ↗</a>
+          </div>
         </div>
         <div class="tabs">
           <button class="tab-btn active" data-tab="overview">Overview</button>
-          <button class="tab-btn" data-tab="match">Match Rating</button>
+          <button class="tab-btn" data-tab="match">Match</button>
           <button class="tab-btn" data-tab="letter">Cover Letter</button>
           <button class="tab-btn" data-tab="ats">ATS Tips</button>
           <button class="tab-btn" data-tab="contacts">Contacts</button>
           <button class="tab-btn" data-tab="notes">Notes</button>
         </div>
         <div class="tabpane active" data-pane="overview">
-          <p style="font-size:14px;line-height:1.5">${(job.description || "No description available.").slice(0,500)}${job.description && job.description.length>500 ? "…" : ""}</p>
+          <p class="desc-text short-desc">${shortDesc}</p>
+          <p class="desc-text full-desc" style="display:none">${fullDesc}</p>
+          ${isLong ? `<button class="readmore-btn">Read full description ↓</button>` : ""}
         </div>
         <div class="tabpane" data-pane="match">
           <div class="cols">
             <div>
-              <b style="color:var(--green);font-size:13px">✓ What matches</b>
-              <ul class="plain">${positives.map(p=>`<li>+ ${p}</li>`).join("")}</ul>
+              <span class="section-label">✓ What matches</span>
+              <ul class="plain pos">${positivesHtml}</ul>
             </div>
             <div>
-              <b style="color:var(--red);font-size:13px">✗ Gaps</b>
-              <ul class="plain">${gaps.map(g=>`<li>− ${g}</li>`).join("")}</ul>
+              <span class="section-label">✗ Gaps</span>
+              <ul class="plain gap">${gapsHtml}</ul>
             </div>
           </div>
         </div>
         <div class="tabpane" data-pane="letter">
-          <div style="display:flex;justify-content:space-between;margin-bottom:8px">
-            <span style="font-size:11px;color:#8A8368;font-weight:bold">VARIANT <span class="vnum">1</span> OF 3</span>
-            <div>
-              <button class="btn ghost regen">↻ Regenerate</button>
-              <button class="btn ghost copy">Copy</button>
-            </div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:10px;align-items:center">
+            <span class="section-label" style="margin:0">Variant <span class="vnum">1</span> of 3</span>
+            <div><button class="btn ghost regen">↻ Regenerate</button> <button class="btn ghost copy">Copy</button></div>
           </div>
           <pre class="letter">${coverLetter(job,0)}</pre>
         </div>
         <div class="tabpane" data-pane="ats">
-          <ul class="plain">${atsTips(job).map(t=>`<li>→ ${t}</li>`).join("")}</ul>
+          <ul class="plain pos">${atsTips(job, matched).map(t=>`<li>${t}</li>`).join("")}</ul>
         </div>
         <div class="tabpane" data-pane="contacts">
-          <p style="font-size:13px;color:var(--muted)">No fabricated names or emails — search LinkedIn directly for real recruiters at ${job.company}:</p>
+          <p class="desc-text" style="margin-bottom:12px">No fabricated names or emails — search LinkedIn directly for real recruiters at ${job.company}:</p>
           <a class="btn" href="${linkedinUrl}" target="_blank" rel="noopener" style="text-decoration:none;display:inline-block">Search "${job.company}" on LinkedIn</a>
         </div>
         <div class="tabpane" data-pane="notes">
@@ -234,7 +367,6 @@ function renderJobs() {
         </div>
       </div>`;
 
-    // tab wiring
     const tabBtns = card.querySelectorAll(".tab-btn");
     const panes = card.querySelectorAll(".tabpane");
     tabBtns.forEach(btn => btn.addEventListener("click", () => {
@@ -244,7 +376,18 @@ function renderJobs() {
       card.querySelector(`[data-pane="${btn.dataset.tab}"]`).classList.add("active");
     }));
 
-    // cover letter regenerate/copy
+    const readmoreBtn = card.querySelector(".readmore-btn");
+    if (readmoreBtn) {
+      readmoreBtn.addEventListener("click", () => {
+        const shortEl = card.querySelector(".short-desc");
+        const fullEl = card.querySelector(".full-desc");
+        const expanded = fullEl.style.display !== "none";
+        fullEl.style.display = expanded ? "none" : "block";
+        shortEl.style.display = expanded ? "block" : "none";
+        readmoreBtn.textContent = expanded ? "Read full description ↓" : "Show less ↑";
+      });
+    }
+
     let vi = 0;
     const letterPre = card.querySelector(".letter");
     const vnum = card.querySelector(".vnum");
@@ -262,16 +405,16 @@ function renderJobs() {
 }
 
 async function loadJobs(manual) {
-  document.getElementById("updatedAt").textContent = "Loading…";
+  document.getElementById("updatedAt").textContent = "syncing…";
   try {
     const res = await fetch("./jobs.json?_=" + Date.now());
     const data = await res.json();
     currentJobs = data.jobs || [];
     document.getElementById("updatedAt").textContent =
-      `Last refreshed: ${new Date(data.updatedAt).toLocaleString()} · ${currentJobs.length} matching postings · auto-refreshes hourly via GitHub Actions`;
+      `Last synced ${new Date(data.updatedAt).toLocaleString()} · ${currentJobs.length} results · auto-refreshes hourly`;
     renderJobs();
   } catch (e) {
-    document.getElementById("updatedAt").textContent = "Could not load jobs.json yet — the first hourly run will create it.";
+    document.getElementById("updatedAt").textContent = "Sync failed — feed not reachable yet";
     currentJobs = [];
     renderJobs();
   }
