@@ -18,6 +18,9 @@ jobs:
         with:
           node-version: 20
 
+      - name: Install dependencies
+        run: npm install
+
       - name: Fetch latest jobs
         env:
           ADZUNA_APP_ID: ${{ secrets.ADZUNA_APP_ID }}
