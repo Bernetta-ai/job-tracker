@@ -13,6 +13,18 @@
     --blue: #3B6FF0; --blue-tint: #EAF0FF; --teal: #1FB894; --teal-tint: #E5F8F3;
     --purple: #8B7FF0; --purple-tint: #EFEDFF; --coral-tint: #FFE9EE;
   }
+  html.dark {
+    --bg: #0F1117; --card: #171A21; --border: #2A2F3B;
+    --ink: #ECEEF3; --ink-soft: rgba(236,238,243,0.62); --ink-faint: rgba(236,238,243,0.4);
+    --blue: #7C93FF; --blue-tint: rgba(124,147,255,0.16); --teal: #38D9B9; --teal-tint: rgba(56,217,185,0.14);
+    --purple: #B0A4FF; --purple-tint: rgba(176,164,255,0.16); --coral-tint: rgba(232,96,122,0.2);
+  }
+  html.dark body { background: var(--bg); }
+  html.dark .card, html.dark .manual-panel { box-shadow: none; }
+  html.dark select, html.dark textarea, html.dark .manual-form input,
+  html.dark .resume-doc, html.dark .letter-box { background: var(--bg); color: var(--ink); border-color: var(--border); }
+  html.dark .avatar-wrap img { background: #fff; border-radius: 8px; }
+  html.dark .bell-panel { background: var(--card); }
   * { box-sizing: border-box; }
   body { margin:0; background: var(--bg); color: var(--ink); font-family: 'Inter', sans-serif; }
   .wrap { max-width: 940px; margin: 0 auto; padding: 32px 18px 80px; }
@@ -53,6 +65,20 @@
   .tile.blue { background: var(--blue-tint); } .tile.teal { background: var(--teal-tint); } .tile.purple { background: var(--purple-tint); }
   .tile-label { font-weight:700; font-size: 14px; } .tile-sub { font-size: 12px; color: var(--ink-soft); margin-top:2px; }
   .tile-ring { width:52px; height:52px; margin-top: 14px; } .tile-num { font-size: 26px; font-weight:800; margin-top: 14px; }
+  .theme-switch { position:relative; width:52px; height:28px; flex-shrink:0; }
+  .theme-switch input { opacity:0; width:0; height:0; position:absolute; }
+  .theme-switch .slider {
+    position:absolute; inset:0; background:#E7EAF3; border:1px solid var(--border);
+    border-radius:999px; cursor:pointer; transition: background .2s ease;
+  }
+  .theme-switch .slider::before {
+    content:"☀️"; position:absolute; height:22px; width:22px; left:2px; top:2px;
+    background:#fff; border-radius:50%; transition: transform .2s ease;
+    display:flex; align-items:center; justify-content:center; font-size:11px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  }
+  .theme-switch input:checked + .slider { background:#3B3F52; }
+  .theme-switch input:checked + .slider::before { transform: translateX(24px); content:"🌙"; background:#171A21; }
   .list-section-header { font-size:17px; font-weight:800; margin: 0 0 12px; display:flex; align-items:center; gap:8px; }
   .list-count { font-size:12px; font-weight:700; color: var(--ink-soft); background:#fff; border:1px solid var(--border); border-radius:999px; padding:2px 10px; }
   .card { background: var(--card); border: 1px solid var(--border); border-radius: 18px; margin-top: 14px; overflow: hidden; box-shadow: 0 1px 2px rgba(17,18,20,0.04); }
@@ -140,6 +166,15 @@
     @page { margin: 0.6in; }
   }
 </style>
+<script>
+  // Runs before body paints, so there's no flash of light mode on load.
+  (function() {
+    const saved = localStorage.getItem("egbert-theme");
+    const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+    const isDark = saved ? saved === "dark" : prefersDark;
+    if (isDark) document.documentElement.classList.add("dark");
+  })();
+</script>
 </head>
 <body>
 <div class="wrap">
@@ -149,6 +184,10 @@
       <div class="meta" id="updatedAt">syncing…</div>
     </div>
     <div class="header-actions">
+      <label class="theme-switch">
+        <input type="checkbox" id="themeToggle" onchange="setTheme(this.checked)">
+        <span class="slider"></span>
+      </label>
       <div class="bell-wrap">
         <button class="bell-btn" onclick="toggleBell()">🔔<span class="bell-badge" id="bellBadge" style="display:none">0</span></button>
         <div class="bell-panel" id="bellPanel">
@@ -761,6 +800,12 @@ async function loadJobs() {
 document.addEventListener("click", (e) => {
   if (!e.target.closest(".bell-wrap")) document.getElementById("bellPanel").classList.remove("open");
 });
+
+function setTheme(isDark) {
+  document.documentElement.classList.toggle("dark", isDark);
+  localStorage.setItem("egbert-theme", isDark ? "dark" : "light");
+}
+document.getElementById("themeToggle").checked = document.documentElement.classList.contains("dark");
 
 loadJobs();
 </script>
