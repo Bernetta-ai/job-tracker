@@ -481,6 +481,7 @@ function resolveDomain(job) {
   if (job.website) return job.website;
   return guessDomain(job.company);
 }
+function getSeenIds() { return new Set(JSON.parse(localStorage.getItem("egbert-seen-ids") || "[]")); }
 function markAllSeen() {
   const ids = currentJobs.map(j => j.id);
   localStorage.setItem("egbert-seen-ids", JSON.stringify(ids));
