@@ -53,9 +53,8 @@
   .tile.blue { background: var(--blue-tint); } .tile.teal { background: var(--teal-tint); } .tile.purple { background: var(--purple-tint); }
   .tile-label { font-weight:700; font-size: 14px; } .tile-sub { font-size: 12px; color: var(--ink-soft); margin-top:2px; }
   .tile-ring { width:52px; height:52px; margin-top: 14px; } .tile-num { font-size: 26px; font-weight:800; margin-top: 14px; }
-  .filters { display:flex; gap:8px; margin-top: 26px; flex-wrap: wrap; }
-  .chip { font-size: 12.5px; font-weight:600; padding: 8px 14px; border-radius: 999px; border: 1px solid var(--border); background: #fff; color: var(--ink-soft); cursor:pointer; }
-  .chip.active { background: var(--ink); border-color: var(--ink); color: #fff; }
+  .list-section-header { font-size:17px; font-weight:800; margin: 0 0 12px; display:flex; align-items:center; gap:8px; }
+  .list-count { font-size:12px; font-weight:700; color: var(--ink-soft); background:#fff; border:1px solid var(--border); border-radius:999px; padding:2px 10px; }
   .card { background: var(--card); border: 1px solid var(--border); border-radius: 18px; margin-top: 14px; overflow: hidden; box-shadow: 0 1px 2px rgba(17,18,20,0.04); }
   .card-head { display:flex; gap:16px; padding: 18px; cursor:pointer; align-items:center; }
   .card-head:hover { background: #FAFBFD; }
@@ -77,12 +76,10 @@
   .status-row { display:flex; gap:10px; align-items:center; margin-bottom:16px; flex-wrap:wrap; }
   select, textarea { font-family: 'Inter', sans-serif; border: 1px solid var(--border); border-radius:10px; padding: 8px 11px; background: #fff; color: var(--ink); font-size: 13px; font-weight:500; }
   textarea { width:100%; resize:vertical; }
-  .detail-grid { display:grid; grid-template-columns: 138px 1fr; gap:18px; }
-  @media (max-width:520px){ .detail-grid{ grid-template-columns:1fr; } }
-  .tabs { display:flex; flex-direction:column; gap:5px; }
-  .tab-btn { border:none; background: var(--bg); color: var(--ink-soft); padding: 9px 12px; border-radius: 10px; font-size: 12.5px; font-weight:700; cursor:pointer; text-align:left; }
-  .tab-btn.active { background: var(--ink); color:#fff; }
-  .tabpane { display:none; min-width:0; } .tabpane.active { display:block; }
+  .sections { display:flex; flex-direction:column; gap:22px; }
+  .section-block { border-top:1px solid var(--border); padding-top:18px; }
+  .section-block:first-child { border-top:none; padding-top:0; }
+  .section-header { font-size:14.5px; font-weight:800; margin:0 0 12px; }
   .desc-text { font-size: 14.5px; line-height: 1.65; color: var(--ink-soft); font-weight:500; }
   .readmore-btn { background: var(--blue-tint); border:none; color: var(--ink); font-weight:700; font-size: 12.5px; cursor:pointer; margin-top:12px; padding:7px 13px; border-radius:999px; }
   .cols { display:grid; grid-template-columns: 1fr 1fr; gap:20px; } @media (max-width:480px){ .cols{grid-template-columns:1fr;} }
@@ -186,7 +183,6 @@
     </div>
   </div>
 
-  <div class="filters" id="filters"></div>
   <div id="jobList"></div>
 </div>
 
@@ -273,8 +269,6 @@ const ACHIEVEMENTS = [
   { tag: ["technical / IT recruiting"], text: "worked closely with 8+ hiring managers to sharpen technical job descriptions and close some genuinely hard-to-fill IT roles" },
 ];
 
-const CATEGORIES = ["All","Recruiter","Talent Acquisition","IT Recruiter","Sourcing Specialist","Recruitment Consultant"];
-let activeCategory = "All";
 let currentJobs = [];
 const AVATAR_CLASSES = ["", "c1", "c2"];
 
@@ -381,22 +375,6 @@ function buildResumeHTML(job, matched) {
     <h2>Licenses &amp; Certifications</h2>
     <ul>${RESUME_DATA.certifications.map(c=>`<li>${c}</li>`).join("")}</ul>
   `;
-}
-
-function matchesCategory(job) {
-  if (activeCategory === "All") return true;
-  return job.title.toLowerCase().includes(activeCategory.toLowerCase().split(" ")[0]);
-}
-
-function renderFilters() {
-  const el = document.getElementById("filters"); el.innerHTML = "";
-  CATEGORIES.forEach(c => {
-    const b = document.createElement("button");
-    b.className = "chip" + (activeCategory===c ? " active":"");
-    b.textContent = c;
-    b.onclick = () => { activeCategory=c; renderFilters(); renderJobs(); };
-    el.appendChild(b);
-  });
 }
 
 function saveJobMeta(id, patch) {
@@ -541,177 +519,193 @@ function guessDomain(company) {
   return name ? `${name}.com` : null;
 }
 
+function createJobCard(job, idx, seen) {
+  const { score, matched, gaps } = analyzeJob(job);
+  const meta = getJobMeta(job.id);
+  const isManual = job.source === "Manual";
+  const isNew = !isManual && !seen.has(job.id);
+  const card = document.createElement("div");
+  card.className = "card";
+  card.setAttribute("data-job-id", job.id);
+  const linkedinUrl = `https://www.linkedin.com/search/results/people/?keywords=${encodeURIComponent(job.company+" talent acquisition")}`;
+  const googleFallback = `https://www.google.com/search?q=${encodeURIComponent('"'+job.title+'" "'+job.company+'" job')}`;
+  const fullDesc = job.description || "No description available.";
+  const isLong = fullDesc.length > 420;
+  const shortDesc = isLong ? fullDesc.slice(0,420)+"…" : fullDesc;
+  const initial = (job.company||"?").trim().charAt(0).toUpperCase();
+  const avatarClass = AVATAR_CLASSES[idx%3];
+  const domain = resolveDomain(job);
+  const logoUrl = domain ? `https://logo.clearbit.com/${domain}` : null;
+  const hunterUrl = domain ? `https://hunter.io/search/${domain}` : null;
+  const savedLetter = getLetterText(job.id);
+  const initialLetter = savedLetter || coverLetter(job, matched, 0);
+  const savedResume = getResumeHTML(job.id);
+  const initialResume = savedResume || buildResumeHTML(job, matched);
+
+  const positivesHtml = matched.length
+    ? matched.slice(0,4).map(m => `<li><b>${m.label}</b>${m.snippet?` — "…${m.snippet}…"`:""}</li>`).join("")
+    : `<li>No strong keyword overlap detected — may be a stretch role, or the description is thin. Worth a manual read before applying.</li>`;
+  const gapsHtml = gaps.length ? gaps.map(g=>`<li>${g}</li>`).join("") : `<li>No notable gaps — strong overlap with your resume.</li>`;
+
+  card.innerHTML = `
+    <div class="card-head" onclick="this.nextElementSibling.classList.toggle('open')">
+      <div class="avatar-wrap ${avatarClass}">
+        <div class="avatar-letter">${initial}</div>
+        ${logoUrl ? `<img src="${logoUrl}" alt="" onerror="this.remove()" />` : ""}
+      </div>
+      <div style="flex:1; min-width:0">
+        <div class="titlebar"><h3>${job.title}</h3><span class="tag">Remote</span>${isNew?`<span class="tag newtag">New</span>`:""}${isManual?`<span class="tag" style="background:var(--purple-tint)">Manual</span>`:""}</div>
+        <div class="subrow">
+          <span><b>${job.company}</b></span>
+          ${domain ? `<a href="https://${domain}" target="_blank" rel="noopener" style="color:var(--blue);font-weight:600;text-decoration:none">${domain} ↗</a>` : ""}
+          <span>${job.location||"Remote"}</span>
+          <span>${job.postedAt ? new Date(job.postedAt).toLocaleDateString() : "date unverified"} · ${job.source}</span>
+        </div>
+      </div>
+      <div class="gauge-mini">${gaugeSvg(score)}<div class="gauge-mini-num">${score}</div></div>
+      <span class="chev">▾</span>
+    </div>
+    <div class="body">
+      <div class="status-row">
+        <label style="font-size:12px;color:var(--ink-soft);font-weight:700">Status</label>
+        <select onchange="saveJobMeta('${job.id}', {status:this.value})">
+          ${["New","Saved","Applied","Interviewing","Rejected","Not Applicable"].map(s=>`<option value="${s}" ${meta.status===s?"selected":""}>${s}</option>`).join("")}
+        </select>
+        <div class="link-row">
+          ${job.url && job.url !== "#" ? `<a class="src-link" href="${job.url}" target="_blank" rel="noopener">View source ↗</a>` : ""}
+          ${!isManual ? `<a class="fallback-link" href="${googleFallback}" target="_blank" rel="noopener">If that fails, search it ↗</a>` : ""}
+          ${isManual ? `<button class="fallback-link" style="border:1px solid var(--border);cursor:pointer" onclick="removeManualJob('${job.id}')">Remove this entry</button>` : ""}
+        </div>
+      </div>
+      <div class="sections">
+        <div class="section-block">
+          <h4 class="section-header">Overview</h4>
+          <p class="desc-text short-desc">${shortDesc}</p>
+          <p class="desc-text full-desc" style="display:none">${fullDesc}</p>
+          ${isLong ? `<button class="readmore-btn">Read more ↓</button>` : ""}
+          ${job.source === "Adzuna" || job.source === "Jooble" ? `<p class="resume-note" style="margin-top:10px">${job.source} sometimes only provides a shortened snippet through its API, not the full posting — this is everything available without visiting the source. Use "View source" above for the complete listing.</p>` : ""}
+        </div>
+
+        <div class="section-block">
+          <h4 class="section-header">Match</h4>
+          <div class="cols">
+            <div><span class="section-label">✓ What matches</span><ul class="plain pos">${positivesHtml}</ul></div>
+            <div><span class="section-label">✗ Gaps</span><ul class="plain gap">${gapsHtml}</ul></div>
+          </div>
+        </div>
+
+        <div class="section-block">
+          <div class="resume-toolbar">
+            <h4 class="section-header" style="margin:0">Resume — tailored, editable</h4>
+            <div><button class="btn ghost retailor">↻ Re-tailor</button> <button class="btn pdf-btn">⬇ Download PDF</button></div>
+          </div>
+          <div class="resume-doc" contenteditable="true">${initialResume}</div>
+          <div class="resume-note">Skills and bullets are reordered to surface what this listing asks for first — nothing is invented or removed. Edit directly above; it saves automatically. PDF export uses your browser's print function so the text stays real and ATS-readable, not an image.</div>
+        </div>
+
+        <div class="section-block">
+          <div class="letter-actions">
+            <h4 class="section-header" style="margin:0">Cover Letter — editable draft</h4>
+            <div><button class="btn ghost regen">↻ Regenerate</button> <button class="btn ghost copy">Copy</button></div>
+          </div>
+          <textarea class="letter-box">${initialLetter}</textarea>
+          <div class="letter-note">Composed from your real metrics, matched to this listing — edit freely, it saves automatically. Not a live AI rewrite (a public static site can't safely hold an API key); regenerate cycles through different angles.</div>
+        </div>
+
+        <div class="section-block">
+          <h4 class="section-header">ATS Tips</h4>
+          <ul class="plain pos">${atsTips(job,matched).map(t=>`<li>${t}</li>`).join("")}</ul>
+        </div>
+
+        <div class="section-block">
+          <h4 class="section-header">Contacts</h4>
+          <p class="desc-text" style="margin-bottom:12px">No fabricated names or emails, ever — these are live search tools you use yourself, nothing gets scraped or stored.</p>
+          <div class="link-row">
+            <a class="btn" href="${linkedinUrl}" target="_blank" rel="noopener" style="text-decoration:none">Search "${job.company}" TA team on LinkedIn ↗</a>
+            ${hunterUrl ? `<a class="btn ghost" href="${hunterUrl}" target="_blank" rel="noopener" style="text-decoration:none">Find email pattern on Hunter.io ↗</a>` : ""}
+          </div>
+          <p class="resume-note" style="margin-top:14px">Hunter.io shows known email patterns for ${domain||"this company's domain"} for free, no account needed for basic results. Employee headcount isn't something I can pull for free without a paid data provider (Apollo, PDL, etc.) — happy to wire one in if you want to sign up for a key, but I won't guess a number.</p>
+        </div>
+
+        <div class="section-block">
+          <h4 class="section-header">Notes</h4>
+          <textarea placeholder="Notes — who you contacted, interview dates, follow-ups…" style="min-height:70px" onchange="saveJobMeta('${job.id}', {notes:this.value})">${meta.notes||""}</textarea>
+        </div>
+      </div>
+    </div>`;
+
+  const readmoreBtn = card.querySelector(".readmore-btn");
+  if (readmoreBtn) {
+    readmoreBtn.addEventListener("click", () => {
+      const shortEl = card.querySelector(".short-desc");
+      const fullEl = card.querySelector(".full-desc");
+      const expanded = fullEl.style.display !== "none";
+      fullEl.style.display = expanded ? "none" : "block";
+      shortEl.style.display = expanded ? "block" : "none";
+      readmoreBtn.textContent = expanded ? "Read full description ↓" : "Show less ↑";
+    });
+  }
+
+  let vi = 0;
+  const letterBox = card.querySelector(".letter-box");
+  letterBox.addEventListener("change", () => saveLetterText(job.id, letterBox.value));
+  card.querySelector(".regen").addEventListener("click", () => {
+    vi++;
+    const text = coverLetter(job, matched, vi);
+    letterBox.value = text;
+    saveLetterText(job.id, text);
+  });
+  card.querySelector(".copy").addEventListener("click", () => {
+    navigator.clipboard?.writeText(letterBox.value);
+  });
+
+  const resumeDoc = card.querySelector(".resume-doc");
+  resumeDoc.addEventListener("input", () => saveResumeHTML(job.id, resumeDoc.innerHTML));
+  card.querySelector(".retailor").addEventListener("click", () => {
+    const html = buildResumeHTML(job, matched);
+    resumeDoc.innerHTML = html;
+    saveResumeHTML(job.id, html);
+  });
+  card.querySelector(".pdf-btn").addEventListener("click", () => {
+    const printArea = document.getElementById("resumePrintArea");
+    printArea.innerHTML = `<div class="resume-doc">${resumeDoc.innerHTML}</div>`;
+    window.print();
+  });
+
+  return card;
+}
+
 function renderJobs() {
   const listEl = document.getElementById("jobList");
   const seen = getSeenIds();
-  const filtered = getDisplayJobs().filter(matchesCategory);
+  const manualJobs = getManualJobs();
   updateTiles(); updateBell();
-  if (filtered.length === 0) {
-    listEl.innerHTML = `<div class="empty">Nothing in this category right now. The feed checks every 15 minutes.</div>`;
-    return;
-  }
+
   listEl.innerHTML = "";
-  filtered.forEach((job, idx) => {
-    const { score, matched, gaps } = analyzeJob(job);
-    const meta = getJobMeta(job.id);
-    const isManual = job.source === "Manual";
-    const isNew = !isManual && !seen.has(job.id);
-    const card = document.createElement("div");
-    card.className = "card";
-    card.setAttribute("data-job-id", job.id);
-    const linkedinUrl = `https://www.linkedin.com/search/results/people/?keywords=${encodeURIComponent(job.company+" talent acquisition")}`;
-    const googleFallback = `https://www.google.com/search?q=${encodeURIComponent('"'+job.title+'" "'+job.company+'" job')}`;
-    const fullDesc = job.description || "No description available.";
-    const isLong = fullDesc.length > 420;
-    const shortDesc = isLong ? fullDesc.slice(0,420)+"…" : fullDesc;
-    const initial = (job.company||"?").trim().charAt(0).toUpperCase();
-    const avatarClass = AVATAR_CLASSES[idx%3];
-    const domain = resolveDomain(job);
-    const logoUrl = domain ? `https://logo.clearbit.com/${domain}` : null;
-    const hunterUrl = domain ? `https://hunter.io/search/${domain}` : null;
-    const savedLetter = getLetterText(job.id);
-    const initialLetter = savedLetter || coverLetter(job, matched, 0);
-    const savedResume = getResumeHTML(job.id);
-    const initialResume = savedResume || buildResumeHTML(job, matched);
 
-    const positivesHtml = matched.length
-      ? matched.slice(0,4).map(m => `<li><b>${m.label}</b>${m.snippet?` — "…${m.snippet}…"`:""}</li>`).join("")
-      : `<li>No strong keyword overlap detected — may be a stretch role, or the description is thin. Worth a manual read before applying.</li>`;
-    const gapsHtml = gaps.length ? gaps.map(g=>`<li>${g}</li>`).join("") : `<li>No notable gaps — strong overlap with your resume.</li>`;
+  const manualSection = document.createElement("div");
+  manualSection.innerHTML = `<h3 class="list-section-header">Manually Added <span class="list-count">${manualJobs.length}</span></h3>`;
+  const manualList = document.createElement("div");
+  if (manualJobs.length === 0) {
+    manualList.innerHTML = `<div class="empty" style="padding:30px 20px">Nothing pasted in yet — use the panel above to add a job from LinkedIn, Indeed, or anywhere else.</div>`;
+  } else {
+    manualJobs.forEach((job, idx) => manualList.appendChild(createJobCard(job, idx, seen)));
+  }
+  manualSection.appendChild(manualList);
 
-    card.innerHTML = `
-      <div class="card-head" onclick="this.nextElementSibling.classList.toggle('open')">
-        <div class="avatar-wrap ${avatarClass}">
-          <div class="avatar-letter">${initial}</div>
-          ${logoUrl ? `<img src="${logoUrl}" alt="" onerror="this.remove()" />` : ""}
-        </div>
-        <div style="flex:1; min-width:0">
-          <div class="titlebar"><h3>${job.title}</h3><span class="tag">Remote</span>${isNew?`<span class="tag newtag">New</span>`:""}${isManual?`<span class="tag" style="background:var(--purple-tint)">Manual</span>`:""}</div>
-          <div class="subrow">
-            <span><b>${job.company}</b></span>
-            ${domain ? `<a href="https://${domain}" target="_blank" rel="noopener" style="color:var(--blue);font-weight:600;text-decoration:none">${domain} ↗</a>` : ""}
-            <span>${job.location||"Remote"}</span>
-            <span>${job.postedAt ? new Date(job.postedAt).toLocaleDateString() : "date unverified"} · ${job.source}</span>
-          </div>
-        </div>
-        <div class="gauge-mini">${gaugeSvg(score)}<div class="gauge-mini-num">${score}</div></div>
-        <span class="chev">▾</span>
-      </div>
-      <div class="body">
-        <div class="status-row">
-          <label style="font-size:12px;color:var(--ink-soft);font-weight:700">Status</label>
-          <select onchange="saveJobMeta('${job.id}', {status:this.value})">
-            ${["New","Saved","Applied","Interviewing","Rejected","Not Applicable"].map(s=>`<option value="${s}" ${meta.status===s?"selected":""}>${s}</option>`).join("")}
-          </select>
-          <div class="link-row">
-            ${job.url && job.url !== "#" ? `<a class="src-link" href="${job.url}" target="_blank" rel="noopener">View source ↗</a>` : ""}
-            ${!isManual ? `<a class="fallback-link" href="${googleFallback}" target="_blank" rel="noopener">If that fails, search it ↗</a>` : ""}
-            ${isManual ? `<button class="fallback-link" style="border:1px solid var(--border);cursor:pointer" onclick="removeManualJob('${job.id}')">Remove this entry</button>` : ""}
-          </div>
-        </div>
-        <div class="detail-grid">
-          <div class="tabs">
-            <button class="tab-btn active" data-tab="overview">Overview</button>
-            <button class="tab-btn" data-tab="match">Match</button>
-            <button class="tab-btn" data-tab="resume">Resume</button>
-            <button class="tab-btn" data-tab="letter">Cover Letter</button>
-            <button class="tab-btn" data-tab="ats">ATS Tips</button>
-            <button class="tab-btn" data-tab="contacts">Contacts</button>
-            <button class="tab-btn" data-tab="notes">Notes</button>
-          </div>
-          <div>
-            <div class="tabpane active" data-pane="overview">
-              <p class="desc-text short-desc">${shortDesc}</p>
-              <p class="desc-text full-desc" style="display:none">${fullDesc}</p>
-              ${isLong ? `<button class="readmore-btn">Read full description ↓</button>` : ""}
-            </div>
-            <div class="tabpane" data-pane="match">
-              <div class="cols">
-                <div><span class="section-label">✓ What matches</span><ul class="plain pos">${positivesHtml}</ul></div>
-                <div><span class="section-label">✗ Gaps</span><ul class="plain gap">${gapsHtml}</ul></div>
-              </div>
-            </div>
-            <div class="tabpane" data-pane="resume">
-              <div class="resume-toolbar">
-                <span class="section-label" style="margin:0">Tailored resume — editable</span>
-                <div><button class="btn ghost retailor">↻ Re-tailor</button> <button class="btn pdf-btn">⬇ Download PDF</button></div>
-              </div>
-              <div class="resume-doc" contenteditable="true">${initialResume}</div>
-              <div class="resume-note">Skills and bullets are reordered to surface what this listing asks for first — nothing is invented or removed. Edit directly above; it saves automatically. PDF export uses your browser's print function so the text stays real and ATS-readable, not an image.</div>
-            </div>
-            <div class="tabpane" data-pane="letter">
-              <div class="letter-actions">
-                <span class="section-label" style="margin:0">Editable draft</span>
-                <div><button class="btn ghost regen">↻ Regenerate</button> <button class="btn ghost copy">Copy</button></div>
-              </div>
-              <textarea class="letter-box">${initialLetter}</textarea>
-              <div class="letter-note">Composed from your real metrics, matched to this listing — edit freely, it saves automatically. Not a live AI rewrite (a public static site can't safely hold an API key); regenerate cycles through different angles.</div>
-            </div>
-            <div class="tabpane" data-pane="ats"><ul class="plain pos">${atsTips(job,matched).map(t=>`<li>${t}</li>`).join("")}</ul></div>
-            <div class="tabpane" data-pane="contacts">
-              <p class="desc-text" style="margin-bottom:12px">No fabricated names or emails, ever — these are live search tools you use yourself, nothing gets scraped or stored.</p>
-              <div class="link-row">
-                <a class="btn" href="${linkedinUrl}" target="_blank" rel="noopener" style="text-decoration:none">Search "${job.company}" TA team on LinkedIn ↗</a>
-                ${hunterUrl ? `<a class="btn ghost" href="${hunterUrl}" target="_blank" rel="noopener" style="text-decoration:none">Find email pattern on Hunter.io ↗</a>` : ""}
-              </div>
-              <p class="resume-note" style="margin-top:14px">Hunter.io shows known email patterns for ${domain||"this company's domain"} for free, no account needed for basic results. Employee headcount isn't something I can pull for free without a paid data provider (Apollo, PDL, etc.) — happy to wire one in if you want to sign up for a key, but I won't guess a number. Also worth knowing: if we ever auto-fetch real people's names/emails into this feed, that data would sit in a public file anyone with the link could see — so for now this stays as live tools you click yourself, not stored data.</p>
-            </div>
-            <div class="tabpane" data-pane="notes">
-              <textarea placeholder="Notes — who you contacted, interview dates, follow-ups…" style="min-height:70px" onchange="saveJobMeta('${job.id}', {notes:this.value})">${meta.notes||""}</textarea>
-            </div>
-          </div>
-        </div>
-      </div>`;
+  const feedSection = document.createElement("div");
+  feedSection.style.marginTop = "30px";
+  feedSection.innerHTML = `<h3 class="list-section-header">Live Feed <span class="list-count">${currentJobs.length}</span></h3>`;
+  const feedList = document.createElement("div");
+  if (currentJobs.length === 0) {
+    feedList.innerHTML = `<div class="empty" style="padding:30px 20px">Nothing in the automated feed right now. It checks every 15 minutes.</div>`;
+  } else {
+    currentJobs.forEach((job, idx) => feedList.appendChild(createJobCard(job, idx, seen)));
+  }
+  feedSection.appendChild(feedList);
 
-    const tabBtns = card.querySelectorAll(".tab-btn");
-    const panes = card.querySelectorAll(".tabpane");
-    tabBtns.forEach(btn => btn.addEventListener("click", () => {
-      tabBtns.forEach(b=>b.classList.remove("active"));
-      panes.forEach(p=>p.classList.remove("active"));
-      btn.classList.add("active");
-      card.querySelector(`[data-pane="${btn.dataset.tab}"]`).classList.add("active");
-    }));
-
-    const readmoreBtn = card.querySelector(".readmore-btn");
-    if (readmoreBtn) {
-      readmoreBtn.addEventListener("click", () => {
-        const shortEl = card.querySelector(".short-desc");
-        const fullEl = card.querySelector(".full-desc");
-        const expanded = fullEl.style.display !== "none";
-        fullEl.style.display = expanded ? "none" : "block";
-        shortEl.style.display = expanded ? "block" : "none";
-        readmoreBtn.textContent = expanded ? "Read full description ↓" : "Show less ↑";
-      });
-    }
-
-    let vi = 0;
-    const letterBox = card.querySelector(".letter-box");
-    letterBox.addEventListener("change", () => saveLetterText(job.id, letterBox.value));
-    card.querySelector(".regen").addEventListener("click", () => {
-      vi++;
-      const text = coverLetter(job, matched, vi);
-      letterBox.value = text;
-      saveLetterText(job.id, text);
-    });
-    card.querySelector(".copy").addEventListener("click", () => {
-      navigator.clipboard?.writeText(letterBox.value);
-    });
-
-    const resumeDoc = card.querySelector(".resume-doc");
-    resumeDoc.addEventListener("input", () => saveResumeHTML(job.id, resumeDoc.innerHTML));
-    card.querySelector(".retailor").addEventListener("click", () => {
-      const html = buildResumeHTML(job, matched);
-      resumeDoc.innerHTML = html;
-      saveResumeHTML(job.id, html);
-    });
-    card.querySelector(".pdf-btn").addEventListener("click", () => {
-      const printArea = document.getElementById("resumePrintArea");
-      printArea.innerHTML = `<div class="resume-doc">${resumeDoc.innerHTML}</div>`;
-      window.print();
-    });
-
-    listEl.appendChild(card);
-  });
+  listEl.appendChild(manualSection);
+  listEl.appendChild(feedSection);
 }
 
 async function loadJobs() {
@@ -738,7 +732,6 @@ document.addEventListener("click", (e) => {
   if (!e.target.closest(".bell-wrap")) document.getElementById("bellPanel").classList.remove("open");
 });
 
-renderFilters();
 loadJobs();
 </script>
 </body>
