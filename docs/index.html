@@ -79,7 +79,15 @@
   .sections { display:flex; flex-direction:column; gap:22px; }
   .section-block { border-top:1px solid var(--border); padding-top:18px; }
   .section-block:first-child { border-top:none; padding-top:0; }
-  .section-header { font-size:14.5px; font-weight:800; margin:0 0 12px; }
+  .section-header-row {
+    display:flex; justify-content:space-between; align-items:center; width:100%;
+    background: var(--blue-tint); border:none; border-radius:999px; padding:11px 16px;
+    cursor:pointer; font-weight:800; font-size:14px; color: var(--ink); text-align:left;
+  }
+  .section-header-row:active { transform: scale(0.99); }
+  .chev-mini { transition: transform .2s ease; font-size:13px; flex-shrink:0; margin-left:10px; }
+  .section-content { padding:14px 4px 0; }
+  .section-content.hidden { display:none; }
   .desc-text { font-size: 14.5px; line-height: 1.65; color: var(--ink-soft); font-weight:500; }
   .readmore-btn { background: var(--blue-tint); border:none; color: var(--ink); font-weight:700; font-size: 12.5px; cursor:pointer; margin-top:12px; padding:7px 13px; border-radius:999px; }
   .cols { display:grid; grid-template-columns: 1fr 1fr; gap:20px; } @media (max-width:480px){ .cols{grid-template-columns:1fr;} }
@@ -519,6 +527,13 @@ function guessDomain(company) {
   return name ? `${name}.com` : null;
 }
 
+function toggleSection(btn) {
+  const content = btn.nextElementSibling;
+  const isHidden = content.classList.contains("hidden");
+  content.classList.toggle("hidden", !isHidden);
+  btn.querySelector(".chev-mini").textContent = isHidden ? "▾" : "▸";
+}
+
 function createJobCard(job, idx, seen) {
   const { score, matched, gaps } = analyzeJob(job);
   const meta = getJobMeta(job.id);
@@ -579,57 +594,71 @@ function createJobCard(job, idx, seen) {
       </div>
       <div class="sections">
         <div class="section-block">
-          <h4 class="section-header">Overview</h4>
-          <p class="desc-text short-desc">${shortDesc}</p>
-          <p class="desc-text full-desc" style="display:none">${fullDesc}</p>
-          ${isLong ? `<button class="readmore-btn">Read more ↓</button>` : ""}
-          ${job.source === "Adzuna" || job.source === "Jooble" ? `<p class="resume-note" style="margin-top:10px">${job.source} sometimes only provides a shortened snippet through its API, not the full posting — this is everything available without visiting the source. Use "View source" above for the complete listing.</p>` : ""}
-        </div>
-
-        <div class="section-block">
-          <h4 class="section-header">Match</h4>
-          <div class="cols">
-            <div><span class="section-label">✓ What matches</span><ul class="plain pos">${positivesHtml}</ul></div>
-            <div><span class="section-label">✗ Gaps</span><ul class="plain gap">${gapsHtml}</ul></div>
+          <button class="section-header-row" onclick="toggleSection(this)"><span>Overview</span><span class="chev-mini">▾</span></button>
+          <div class="section-content">
+            <p class="desc-text short-desc">${shortDesc}</p>
+            <p class="desc-text full-desc" style="display:none">${fullDesc}</p>
+            ${isLong ? `<button class="readmore-btn">Read more ↓</button>` : ""}
+            ${job.source === "Adzuna" || job.source === "Jooble" ? `<p class="resume-note" style="margin-top:10px">${job.source} sometimes only provides a shortened snippet through its API, not the full posting — this is everything available without visiting the source. Use "View source" above for the complete listing.</p>` : ""}
           </div>
         </div>
 
         <div class="section-block">
-          <div class="resume-toolbar">
-            <h4 class="section-header" style="margin:0">Resume — tailored, editable</h4>
-            <div><button class="btn ghost retailor">↻ Re-tailor</button> <button class="btn pdf-btn">⬇ Download PDF</button></div>
+          <button class="section-header-row" onclick="toggleSection(this)"><span>Match</span><span class="chev-mini">▸</span></button>
+          <div class="section-content hidden">
+            <div class="cols">
+              <div><span class="section-label">✓ What matches</span><ul class="plain pos">${positivesHtml}</ul></div>
+              <div><span class="section-label">✗ Gaps</span><ul class="plain gap">${gapsHtml}</ul></div>
+            </div>
           </div>
-          <div class="resume-doc" contenteditable="true">${initialResume}</div>
-          <div class="resume-note">Skills and bullets are reordered to surface what this listing asks for first — nothing is invented or removed. Edit directly above; it saves automatically. PDF export uses your browser's print function so the text stays real and ATS-readable, not an image.</div>
         </div>
 
         <div class="section-block">
-          <div class="letter-actions">
-            <h4 class="section-header" style="margin:0">Cover Letter — editable draft</h4>
-            <div><button class="btn ghost regen">↻ Regenerate</button> <button class="btn ghost copy">Copy</button></div>
+          <button class="section-header-row" onclick="toggleSection(this)"><span>Resume — tailored, editable</span><span class="chev-mini">▸</span></button>
+          <div class="section-content hidden">
+            <div class="resume-toolbar" style="justify-content:flex-end">
+              <button class="btn ghost retailor">↻ Re-tailor</button> <button class="btn pdf-btn">⬇ Download PDF</button>
+            </div>
+            <div class="resume-doc" contenteditable="true">${initialResume}</div>
+            <div class="resume-note">Skills and bullets are reordered to surface what this listing asks for first — nothing is invented or removed. Edit directly above; it saves automatically. PDF export uses your browser's print function so the text stays real and ATS-readable, not an image.</div>
           </div>
-          <textarea class="letter-box">${initialLetter}</textarea>
-          <div class="letter-note">Composed from your real metrics, matched to this listing — edit freely, it saves automatically. Not a live AI rewrite (a public static site can't safely hold an API key); regenerate cycles through different angles.</div>
         </div>
 
         <div class="section-block">
-          <h4 class="section-header">ATS Tips</h4>
-          <ul class="plain pos">${atsTips(job,matched).map(t=>`<li>${t}</li>`).join("")}</ul>
-        </div>
-
-        <div class="section-block">
-          <h4 class="section-header">Contacts</h4>
-          <p class="desc-text" style="margin-bottom:12px">No fabricated names or emails, ever — these are live search tools you use yourself, nothing gets scraped or stored.</p>
-          <div class="link-row">
-            <a class="btn" href="${linkedinUrl}" target="_blank" rel="noopener" style="text-decoration:none">Search "${job.company}" TA team on LinkedIn ↗</a>
-            ${hunterUrl ? `<a class="btn ghost" href="${hunterUrl}" target="_blank" rel="noopener" style="text-decoration:none">Find email pattern on Hunter.io ↗</a>` : ""}
+          <button class="section-header-row" onclick="toggleSection(this)"><span>Cover Letter — editable draft</span><span class="chev-mini">▸</span></button>
+          <div class="section-content hidden">
+            <div class="letter-actions" style="justify-content:flex-end">
+              <button class="btn ghost regen">↻ Regenerate</button> <button class="btn ghost copy">Copy</button>
+            </div>
+            <textarea class="letter-box">${initialLetter}</textarea>
+            <div class="letter-note">Composed from your real metrics, matched to this listing — edit freely, it saves automatically. Not a live AI rewrite (a public static site can't safely hold an API key); regenerate cycles through different angles.</div>
           </div>
-          <p class="resume-note" style="margin-top:14px">Hunter.io shows known email patterns for ${domain||"this company's domain"} for free, no account needed for basic results. Employee headcount isn't something I can pull for free without a paid data provider (Apollo, PDL, etc.) — happy to wire one in if you want to sign up for a key, but I won't guess a number.</p>
         </div>
 
         <div class="section-block">
-          <h4 class="section-header">Notes</h4>
-          <textarea placeholder="Notes — who you contacted, interview dates, follow-ups…" style="min-height:70px" onchange="saveJobMeta('${job.id}', {notes:this.value})">${meta.notes||""}</textarea>
+          <button class="section-header-row" onclick="toggleSection(this)"><span>ATS Tips</span><span class="chev-mini">▸</span></button>
+          <div class="section-content hidden">
+            <ul class="plain pos">${atsTips(job,matched).map(t=>`<li>${t}</li>`).join("")}</ul>
+          </div>
+        </div>
+
+        <div class="section-block">
+          <button class="section-header-row" onclick="toggleSection(this)"><span>Contacts</span><span class="chev-mini">▸</span></button>
+          <div class="section-content hidden">
+            <p class="desc-text" style="margin-bottom:12px">No fabricated names or emails, ever — these are live search tools you use yourself, nothing gets scraped or stored.</p>
+            <div class="link-row">
+              <a class="btn" href="${linkedinUrl}" target="_blank" rel="noopener" style="text-decoration:none">Search "${job.company}" TA team on LinkedIn ↗</a>
+              ${hunterUrl ? `<a class="btn ghost" href="${hunterUrl}" target="_blank" rel="noopener" style="text-decoration:none">Find email pattern on Hunter.io ↗</a>` : ""}
+            </div>
+            <p class="resume-note" style="margin-top:14px">Hunter.io shows known email patterns for ${domain||"this company's domain"} for free, no account needed for basic results. Employee headcount isn't something I can pull for free without a paid data provider (Apollo, PDL, etc.) — happy to wire one in if you want to sign up for a key, but I won't guess a number.</p>
+          </div>
+        </div>
+
+        <div class="section-block">
+          <button class="section-header-row" onclick="toggleSection(this)"><span>Notes</span><span class="chev-mini">▸</span></button>
+          <div class="section-content hidden">
+            <textarea placeholder="Notes — who you contacted, interview dates, follow-ups…" style="min-height:70px" onchange="saveJobMeta('${job.id}', {notes:this.value})">${meta.notes||""}</textarea>
+          </div>
         </div>
       </div>
     </div>`;
