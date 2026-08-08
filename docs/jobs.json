@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-08-08T06:13:18.100Z",
+  "updatedAt": "2026-08-08T06:46:43.828Z",
   "count": 1,
   "jobs": [
     {
@@ -11,6 +11,7 @@
       "postedAt": "2026-07-31T21:30:18Z",
       "source": "Adzuna",
       "description": "Talent Acquisition- Intern/Executive Experience: 3 Years Location: Remote Employment Type: Full-time About the Role We are looking for motivated and results-oriented TA executives to join our recruitment team. This role is ideal for professionals with 3 years of experience who are passionate about hiring and building exceptional talent pipelines. Depending on your experience level, you will either support or independently manage the end-to-end recruitment lifecycle while partnering with hiring …",
+      "descriptionExtracted": false,
       "status": "New",
       "notes": "",
       "firstSeenAt": "2026-08-08T05:25:06.903Z"
