@@ -24,8 +24,13 @@ function titleMatches(title = "") {
 function locationLooksOk(locationStr = "") {
   return !EXCLUDE_LOCATION_PATTERNS.some((re) => re.test(locationStr));
 }
+const HYBRID_ONSITE_SIGNAL = /(hybrid|on-site|onsite|in-office|in office|work from office|\bwfo\b)/i;
+
 function isActuallyRemote(job) {
-  return REMOTE_SIGNAL.test(job.title) || REMOTE_SIGNAL.test(job.location || "") || REMOTE_SIGNAL.test((job.description || "").slice(0, 300));
+  const text = `${job.title} ${job.location || ""} ${job.description || ""}`;
+  if (HYBRID_ONSITE_SIGNAL.test(text)) return false;
+  return REMOTE_SIGNAL.test(job.title) || REMOTE_SIGNAL.test(job.location || "") || REMOTE_SIGNAL.test(job.description || "");
+}
 }
 function withinLastWeek(dateStr) {
   if (!dateStr) return true;
