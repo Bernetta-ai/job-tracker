@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "type": "module",
   "private": true,
+  "dependencies": {
+    "jsdom": "^24.0.0",
+    "@mozilla/readability": "^0.5.0"
+  },
   "scripts": {
     "fetch": "node fetch-jobs.mjs"
   }
