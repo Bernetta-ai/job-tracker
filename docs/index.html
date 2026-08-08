@@ -5,23 +5,48 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Egbert Vaz — Job Desk</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Georgia&display=swap" rel="stylesheet">
 <style>
   :root {
     --bg: #F2F4FA; --card: #FFFFFF; --border: #E7EAF3;
     --ink: #111214; --ink-soft: rgba(17,18,20,0.56); --ink-faint: rgba(17,18,20,0.36);
     --blue: #3B6FF0; --blue-tint: #EAF0FF; --teal: #1FB894; --teal-tint: #E5F8F3;
-    --purple: #8B7FF0; --purple-tint: #EFEDFF; --amber-tint: #FFF3DD; --coral-tint: #FFE9EE;
+    --purple: #8B7FF0; --purple-tint: #EFEDFF; --coral-tint: #FFE9EE;
   }
   * { box-sizing: border-box; }
   body { margin:0; background: var(--bg); color: var(--ink); font-family: 'Inter', sans-serif; }
-  .wrap { max-width: 900px; margin: 0 auto; padding: 32px 18px 80px; }
+  .wrap { max-width: 940px; margin: 0 auto; padding: 32px 18px 80px; }
   header { display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:16px; }
   .eyebrow { font-size: 12px; font-weight:600; color: var(--ink-faint); text-transform:uppercase; letter-spacing:0.08em; }
   h1 { font-size: 28px; font-weight: 800; margin: 4px 0 2px; letter-spacing:-0.01em; }
   .sub { color: var(--ink-soft); font-size: 14px; font-weight:500; }
   .meta { font-size: 12.5px; color: var(--ink-faint); margin-top: 8px; }
-  .reload-btn { background: var(--blue); color:#fff; border:none; border-radius: 12px; padding: 11px 18px; font-weight:700; font-size: 13.5px; cursor:pointer; box-shadow: 0 8px 18px -8px rgba(59,111,240,0.55); }
+  .header-actions { display:flex; gap:10px; align-items:flex-start; }
+  .bell-wrap { position:relative; }
+  .bell-btn { background:#fff; border:1px solid var(--border); border-radius:12px; width:44px; height:44px; cursor:pointer; font-size:18px; position:relative; }
+  .bell-badge { position:absolute; top:-6px; right:-6px; background:#E8607A; color:#fff; font-size:10.5px; font-weight:800; min-width:19px; height:19px; border-radius:999px; display:flex; align-items:center; justify-content:center; padding:0 4px; }
+  .bell-panel { position:absolute; right:0; top:52px; width:300px; background:#fff; border:1px solid var(--border); border-radius:14px; box-shadow:0 12px 28px -8px rgba(17,18,20,0.25); z-index:20; display:none; overflow:hidden; }
+  .bell-panel.open { display:block; }
+  .bell-panel-head { padding:14px 16px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; }
+  .bell-panel-head b { font-size:13.5px; }
+  .bell-panel-head button { background:none; border:none; color:var(--blue); font-weight:700; font-size:12px; cursor:pointer; }
+  .bell-list { max-height:280px; overflow-y:auto; }
+  .bell-item { padding:11px 16px; border-bottom:1px solid var(--border); cursor:pointer; font-size:12.5px; }
+  .bell-item:hover { background: var(--bg); }
+  .bell-item b { display:block; font-size:13px; }
+  .bell-empty { padding:24px 16px; text-align:center; color:var(--ink-soft); font-size:12.5px; }
+  .reload-btn {
+    background: linear-gradient(135deg, #4A7CFF, #3B6FF0);
+    color:#fff; border:none; border-radius: 999px; padding: 11px 20px 11px 16px;
+    font-weight:700; font-size: 13.5px; cursor:pointer;
+    box-shadow: 0 10px 22px -8px rgba(59,111,240,0.55), inset 0 1px 0 rgba(255,255,255,0.25);
+    display:flex; align-items:center; gap:8px; transition: transform .12s ease, box-shadow .12s ease;
+  }
+  .reload-btn:hover { box-shadow: 0 12px 26px -6px rgba(59,111,240,0.6), inset 0 1px 0 rgba(255,255,255,0.3); transform: translateY(-1px); }
+  .reload-btn:active { transform: translateY(0px) scale(0.98); }
+  .reload-btn .reload-icon { display:inline-block; font-size:15px; transition: transform .5s ease; }
+  .reload-btn.loading .reload-icon { animation: spin 0.7s linear infinite; }
+  @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
   .tiles { display:grid; grid-template-columns: repeat(3, 1fr); gap:14px; margin-top:24px; }
   @media (max-width:640px){ .tiles{ grid-template-columns:1fr; } }
   .tile { border-radius: 18px; padding: 18px; }
@@ -37,10 +62,11 @@
   .avatar-wrap { width:46px; height:46px; border-radius:14px; flex-shrink:0; position:relative; background: var(--blue-tint); overflow:hidden; }
   .avatar-wrap.c1 { background: var(--teal-tint); } .avatar-wrap.c2 { background: var(--purple-tint); }
   .avatar-wrap img { width:100%; height:100%; object-fit:contain; padding:6px; }
-  .avatar-letter { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:17px; color: var(--ink); }
+  .avatar-letter { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:17px; }
   .titlebar { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
   .titlebar h3 { font-size:16px; font-weight:800; margin:0; }
   .tag { font-size: 10.5px; font-weight:700; text-transform:uppercase; letter-spacing:0.04em; background: var(--teal-tint); color: var(--ink); border-radius:999px; padding: 3px 10px; }
+  .newtag { background: var(--coral-tint); }
   .subrow { color: var(--ink-soft); font-size: 13px; margin-top: 5px; display:flex; gap:12px; flex-wrap:wrap; font-weight:500; }
   .subrow b { color: var(--ink); font-weight:700; }
   .gauge-mini { width:44px; height:44px; flex-shrink:0; position:relative; }
@@ -50,54 +76,90 @@
   .body.open { display:block; }
   .status-row { display:flex; gap:10px; align-items:center; margin-bottom:16px; flex-wrap:wrap; }
   select, textarea { font-family: 'Inter', sans-serif; border: 1px solid var(--border); border-radius:10px; padding: 8px 11px; background: #fff; color: var(--ink); font-size: 13px; font-weight:500; }
-  textarea { width:100%; min-height:70px; resize:vertical; }
-  .tabs { display:flex; gap:6px; flex-wrap:wrap; margin-bottom: 16px; }
-  .tab-btn { border:none; background: var(--bg); color: var(--ink-soft); padding: 7px 14px; border-radius: 10px; font-size: 12.5px; font-weight:700; cursor:pointer; }
+  textarea { width:100%; resize:vertical; }
+  .detail-grid { display:grid; grid-template-columns: 138px 1fr; gap:18px; }
+  @media (max-width:520px){ .detail-grid{ grid-template-columns:1fr; } }
+  .tabs { display:flex; flex-direction:column; gap:5px; }
+  .tab-btn { border:none; background: var(--bg); color: var(--ink-soft); padding: 9px 12px; border-radius: 10px; font-size: 12.5px; font-weight:700; cursor:pointer; text-align:left; }
   .tab-btn.active { background: var(--ink); color:#fff; }
-  .tabpane { display:none; } .tabpane.active { display:block; }
+  .tabpane { display:none; min-width:0; } .tabpane.active { display:block; }
   .desc-text { font-size: 14.5px; line-height: 1.65; color: var(--ink-soft); font-weight:500; }
   .readmore-btn { background: var(--blue-tint); border:none; color: var(--ink); font-weight:700; font-size: 12.5px; cursor:pointer; margin-top:12px; padding:7px 13px; border-radius:999px; }
-  .cols { display:grid; grid-template-columns: 1fr 1fr; gap:20px; } @media (max-width:560px){ .cols{grid-template-columns:1fr;} }
+  .cols { display:grid; grid-template-columns: 1fr 1fr; gap:20px; } @media (max-width:480px){ .cols{grid-template-columns:1fr;} }
   ul.plain { list-style:none; padding:0; margin:0; font-size:13.5px; line-height:1.7; font-weight:500; }
   ul.plain li { margin-bottom:10px; padding-left:20px; position:relative; }
   ul.plain.pos li::before { content:""; position:absolute; left:0; top:7px; width:8px; height:8px; border-radius:2px; background: var(--teal); }
   ul.plain.gap li::before { content:""; position:absolute; left:0; top:7px; width:8px; height:8px; border-radius:2px; background: var(--coral-tint); border:1px solid #E893A6; }
   .section-label { font-size:12.5px; font-weight:800; margin-bottom:10px; display:block; }
-  pre.letter { white-space: pre-wrap; background: var(--bg); border:1px solid var(--border); padding:16px; border-radius:14px; font-size: 13.5px; line-height:1.6; font-family:'Inter', sans-serif; font-weight:500; }
+  .letter-box { width:100%; min-height:230px; font-size: 13.5px; line-height:1.6; background: var(--bg); border:1px solid var(--border); border-radius:14px; padding:16px; }
+  .letter-actions { display:flex; justify-content:space-between; margin-bottom:10px; align-items:center; flex-wrap:wrap; gap:8px; }
   .btn { background: var(--ink); color:#fff; border:none; border-radius:10px; padding:8px 14px; font-size:12.5px; font-weight:700; cursor:pointer; }
   .btn.ghost { background: var(--bg); color: var(--ink); }
+  .letter-note { font-size:11.5px; color: var(--ink-faint); margin-top:8px; }
   .link-row { display:flex; gap:8px; flex-wrap:wrap; }
   a.src-link { color: var(--ink); font-weight:700; font-size:13px; text-decoration:none; background: var(--blue-tint); padding:6px 12px; border-radius:999px; }
   a.fallback-link { color: var(--ink); font-weight:700; font-size:13px; text-decoration:none; background: var(--bg); border: 1px solid var(--border); padding:6px 12px; border-radius:999px; }
+  .manual-panel { background: var(--card); border:1px solid var(--border); border-radius:18px; padding:20px; margin-top:20px; }
+  .manual-panel-head { display:flex; justify-content:space-between; align-items:center; cursor:pointer; }
+  .manual-panel-head h3 { font-size:15px; font-weight:800; margin:0; }
+  .manual-panel-head span { font-size:12px; color:var(--ink-soft); font-weight:600; }
+  .manual-form { display:none; margin-top:16px; }
+  .manual-form.open { display:block; }
+  .manual-row { display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:10px; }
+  @media (max-width:520px){ .manual-row{ grid-template-columns:1fr; } }
+  .manual-form input, .manual-form textarea { width:100%; font-family:'Inter',sans-serif; border:1px solid var(--border); border-radius:10px; padding:9px 12px; font-size:13.5px; background:var(--bg); }
+  .manual-form textarea { min-height:140px; margin-bottom:12px; }
+  .manual-error { color:#C23A56; font-size:12.5px; font-weight:600; margin-bottom:10px; display:none; }
   .empty { text-align:center; padding:70px 20px; color: var(--ink-soft); font-weight:500; }
+
+  /* Resume tab */
+  .resume-doc {
+    background:#fff; border:1px solid var(--border); border-radius:14px; padding:26px;
+    font-family: Georgia, 'Times New Roman', serif; color:#111; font-size:13px; line-height:1.55;
+  }
+  .resume-doc h1 { font-size:19px; margin:0 0 2px; font-family:'Inter',sans-serif; font-weight:800; }
+  .resume-doc .r-contact { font-size:11.5px; color:#444; margin-bottom:14px; font-family:'Inter',sans-serif; }
+  .resume-doc h2 { font-size:11.5px; text-transform:uppercase; letter-spacing:0.06em; border-bottom:1.5px solid #111; padding-bottom:3px; margin:16px 0 8px; font-family:'Inter',sans-serif; font-weight:800; }
+  .resume-doc p { margin:0 0 8px; }
+  .resume-doc .r-role { display:flex; justify-content:space-between; font-weight:700; font-family:'Inter',sans-serif; font-size:12.5px; margin-top:10px; }
+  .resume-doc .r-company { font-style:italic; color:#333; font-size:12px; margin-bottom:4px; }
+  .resume-doc ul { margin:0 0 6px 18px; padding:0; }
+  .resume-doc li { margin-bottom:4px; }
+  .resume-toolbar { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; flex-wrap:wrap; gap:8px; }
+  .resume-note { font-size:11.5px; color: var(--ink-faint); margin-top:10px; }
+  .resume-print-area { position:fixed; top:-99999px; left:-99999px; }
+  @media print {
+    body > * { display:none !important; }
+    .resume-print-area { display:block !important; position:static !important; width:auto; }
+    .resume-print-area .resume-doc { border:none; border-radius:0; padding:0; }
+    @page { margin: 0.6in; }
+  }
 </style>
 </head>
 <body>
 <div class="wrap">
   <header>
     <div>
-      <div class="eyebrow">Job Desk</div>
-      <h1>Good hunting, Egbert</h1>
-      <div class="sub">Talent Acquisition Specialist · 4+ yrs · Goa, India · Remote only</div>
+      <h1>Egbert's Dashboard</h1>
+      <div class="sub">All the best my heart, I am so proud of you for all the effort you put</div>
       <div class="meta" id="updatedAt">syncing…</div>
     </div>
-    <button class="reload-btn" onclick="loadJobs(true)">↻ Reload feed</button>
+    <div class="header-actions">
+      <div class="bell-wrap">
+        <button class="bell-btn" onclick="toggleBell()">🔔<span class="bell-badge" id="bellBadge" style="display:none">0</span></button>
+        <div class="bell-panel" id="bellPanel">
+          <div class="bell-panel-head"><b>New listings</b><button onclick="markAllSeen()">Mark all read</button></div>
+          <div class="bell-list" id="bellList"></div>
+        </div>
+      </div>
+      <button class="reload-btn" id="reloadBtn" onclick="loadJobs(true)"><span class="reload-icon">↻</span> Reload feed</button>
+    </div>
   </header>
 
   <div class="tiles">
-    <div class="tile blue">
-      <div class="tile-label">New signals</div>
-      <div class="tile-sub">this week</div>
-      <div class="tile-num" id="tileNewNum">–</div>
-    </div>
-    <div class="tile teal">
-      <div class="tile-label">Applied</div>
-      <div class="tile-sub" id="tileAppliedSub">of total tracked</div>
-      <div class="tile-num" id="tileAppliedNum">–</div>
-    </div>
-    <div class="tile purple">
-      <div class="tile-label">Avg match</div>
-      <div class="tile-sub">across current feed</div>
+    <div class="tile blue"><div class="tile-label">New signals</div><div class="tile-sub">this week</div><div class="tile-num" id="tileNewNum">–</div></div>
+    <div class="tile teal"><div class="tile-label">Applied</div><div class="tile-sub" id="tileAppliedSub">of total tracked</div><div class="tile-num" id="tileAppliedNum">–</div></div>
+    <div class="tile purple"><div class="tile-label">Avg match</div><div class="tile-sub">across current feed</div>
       <svg class="tile-ring" viewBox="0 0 52 52">
         <circle cx="26" cy="26" r="21" fill="none" stroke="#DCD8FB" stroke-width="6"/>
         <circle cx="26" cy="26" r="21" fill="none" stroke="#8B7FF0" stroke-width="6" stroke-linecap="round" id="avgRingFg" transform="rotate(-90 26 26)"/>
@@ -105,13 +167,33 @@
     </div>
   </div>
 
+  <div class="manual-panel">
+    <div class="manual-panel-head" onclick="document.getElementById('manualForm').classList.toggle('open')">
+      <h3>📋 Paste a job from LinkedIn, Indeed, or anywhere</h3>
+      <span>tap to open ▾</span>
+    </div>
+    <div class="manual-form" id="manualForm">
+      <div class="manual-row">
+        <input type="text" id="manualTitle" placeholder="Job title (e.g. Talent Acquisition Specialist)" />
+        <input type="text" id="manualCompany" placeholder="Company name" />
+      </div>
+      <div class="manual-row">
+        <input type="text" id="manualWebsite" placeholder="Company website (optional, e.g. company.com)" />
+        <input type="text" id="manualUrl" placeholder="Job posting link (optional)" />
+      </div>
+      <textarea id="manualDesc" placeholder="Paste the full job description here…"></textarea>
+      <div class="manual-error" id="manualError">Please fill in at least the job title, company, and description.</div>
+      <button class="btn" onclick="submitManualJob()">Generate cover letter, ATS tips &amp; resume</button>
+    </div>
+  </div>
+
   <div class="filters" id="filters"></div>
   <div id="jobList"></div>
 </div>
 
+<div class="resume-print-area" id="resumePrintArea"></div>
+
 <script>
-// Broader taxonomy: canonical label -> list of phrase variants to search for.
-// This fixes the old bug where a short fixed list produced identical gaps on every card.
 const SKILL_TAXONOMY = [
   { label: "full-cycle recruitment", variants: ["full-cycle recruit", "full cycle recruit", "end-to-end recruit", "end to end recruit"] },
   { label: "sourcing", variants: ["sourcing", "sourced", "talent mapping", "candidate pipeline"] },
@@ -131,48 +213,94 @@ const SKILL_TAXONOMY = [
   { label: "recruitment analytics", variants: ["analytics", "metrics", "time-to-hire", "time to hire", "reporting"] },
 ];
 
+// Real resume content — used both for cover letters and the tailored resume builder.
+// Tailoring only ever reorders/emphasizes what's here; nothing is invented.
+const RESUME_DATA = {
+  name: "Egbert Vaz",
+  contact: "Goa, India · vazegbert@gmail.com · (+91) 8554060875 · LinkedIn Profile",
+  summaryBase: "Talent Acquisition Specialist with 4+ years of global full-cycle recruitment experience, sourcing and placing top-tier talent across India, UK, USA, and APAC in technical and non-technical functions including IT services, SaaS, digital marketing, sales, operations, software engineering, creatives, and analytics.",
+  skillGroups: [
+    { tag: "full-cycle recruitment", items: ["Full-Cycle Recruitment", "Workforce Planning", "Talent Acquisition"] },
+    { tag: "sourcing", items: ["Sourcing Strategies", "Advanced Boolean Search", "Advanced Google Search", "X-Ray Search", "Social Media Recruiting", "Alumni Search", "Community Search", "Talent Mapping"] },
+    { tag: "ATS tools", items: ["BambooHR", "Workday", "Zoho Recruit", "Staffline", "GreyHR", "SAP Fieldglass", "Beeline", "Job Diva"] },
+    { tag: "LinkedIn Recruiter", items: ["LinkedIn Recruiter", "Dice", "Naukri", "RocketReach", "Behance", "Indeed", "Foundit"] },
+    { tag: "DEI hiring", items: ["DEI Hiring Initiatives", "Interview Training"] },
+    { tag: "employer branding", items: ["Employer Branding & Networking"] },
+    { tag: "stakeholder management", items: ["Stakeholder Management", "Screening & Interviewing"] },
+    { tag: "recruitment analytics", items: ["Recruitment Analytics", "Market Research & Salary Benchmarking"] },
+    { tag: "technical / IT recruiting", items: ["IT Recruitment", "Niche & Hard-to-Fill Roles"] },
+  ],
+  experience: [
+    { title: "Career Break, Professional Development & Caregiving", company: "", dates: "May 2025 – Present",
+      bullets: [{ tags:[], text:"Took a deliberate career break to support caregiving responsibilities while investing in professional growth: completed courses in AI tools and AI-powered sourcing, customer success fundamentals, and HR labour law; undertook freelance recruitment work to stay active in the field." }] },
+    { title: "Recruiter", company: "Engage Digital Partners, India | Remote", dates: "June 2023 – April 2025",
+      bullets: [
+        { tags:["full-cycle recruitment"], text:"Led end-to-end recruitment and hired 80+ candidates across digital marketing, creative, tech, finance, sales and data analytics, from associate to C-level, in India, UK and APAC." },
+        { tags:["recruitment analytics"], text:"Reduced time-to-hire by 30% by implementing sourcing strategies and optimizing interview processes." },
+        { tags:["stakeholder management"], text:"Partnered with 8+ hiring managers to refine job descriptions, ensuring alignment with business needs and company culture." },
+        { tags:["ATS tools"], text:"Optimized ATS usage, improved hiring workflow efficiency by 13%, and reduced candidate drop-offs." },
+        { tags:["screening & interviewing"], text:"Managed and improved the candidate experience, achieving a 67% offer-to-joining conversion rate through effective engagement and negotiation." },
+        { tags:["DEI hiring"], text:"Led DEI hiring initiatives and structured interview training for hiring managers to reduce bias and improve panel consistency." },
+        { tags:["employer branding"], text:"Headed employer branding initiatives and social media recruitment campaigns, increasing quality talent pipeline by 17% across India, UK, and APAC markets." },
+      ] },
+    { title: "Technical Recruiter", company: "Global Step, Pune | Hybrid", dates: "July 2022 – June 2023",
+      bullets: [
+        { tags:["sourcing"], text:"Increased candidate pipeline by 45% through optimized sourcing strategies using LinkedIn, job boards, and referrals in India, UK and Canada." },
+        { tags:["screening & interviewing"], text:"Maintained an offer acceptance rate of 75% by aligning candidate expectations with compensation benchmarks and company culture." },
+        { tags:["technical / IT recruiting"], text:"Managed recruitment across Technology, Finance, Sales, Marketing and Creatives, delivering 6 hires per month." },
+        { tags:["stakeholder management"], text:"Enhanced candidate experience through structured communication, reducing candidate drop-offs during hiring by 35%." },
+      ] },
+    { title: "US Recruiter", company: "Compunnel, India | Remote", dates: "May 2021 – April 2022",
+      bullets: [
+        { tags:["international hiring (US/UK/APAC)"], text:"Sourced, screened, and recruited 15 qualified candidates across the US for roles in engineering, healthcare, finance, technology, and manufacturing." },
+        { tags:["offer negotiation"], text:"Negotiated 18+ offers, conducted 27+ background checks, and facilitated onboarding for 15 new hires." },
+        { tags:["ATS tools"], text:"Utilized ATS and CRM tools to track candidate progress, reducing administrative time by 30%." },
+      ] },
+  ],
+  education: "Bachelor of Arts – Journalism, Goa University, Goa, India",
+  certifications: [
+    "Recruiting, Hiring, and Onboarding Employees — University of Minnesota (Coursera)",
+    "Technical Recruiting — SHRM, HRCI",
+  ],
+};
+
+// Egbert's real, quantified achievements — used to compose cover letters.
+const ACHIEVEMENTS = [
+  { tag: ["sourcing","high-volume / bulk hiring","industry / market mapping"], text: "grew the qualified candidate pipeline by 45% through targeted sourcing across LinkedIn, job boards, and referrals" },
+  { tag: ["full-cycle recruitment","screening & interviewing","offer negotiation"], text: "ran full-cycle recruitment for 80+ hires across India, the UK, and APAC, cutting time-to-hire by 30% while holding a 67% offer-to-joining conversion rate" },
+  { tag: ["ATS tools","recruitment analytics"], text: "cleaned up ATS workflows enough to cut process inefficiency by 13% and noticeably reduce candidate drop-off" },
+  { tag: ["DEI hiring","stakeholder management"], text: "led DEI hiring initiatives and built out interview training that made hiring panels more consistent and less bias-prone" },
+  { tag: ["employer branding","international hiring (US/UK/APAC)"], text: "ran employer branding and social recruitment campaigns that grew the quality talent pipeline by 17% across India, UK, and APAC" },
+  { tag: ["technical / IT recruiting"], text: "worked closely with 8+ hiring managers to sharpen technical job descriptions and close some genuinely hard-to-fill IT roles" },
+];
+
 const CATEGORIES = ["All","Recruiter","Talent Acquisition","IT Recruiter","Sourcing Specialist","Recruitment Consultant"];
 let activeCategory = "All";
 let currentJobs = [];
 const AVATAR_CLASSES = ["", "c1", "c2"];
-// Simple deterministic hash so gap ordering varies per job instead of always
-// showing the same first N items from a fixed list.
-function hashStr(s) {
-  let h = 0;
-  for (let i = 0; i < s.length; i++) { h = (h * 31 + s.charCodeAt(i)) >>> 0; }
-  return h;
-}
+
+function hashStr(s) { let h = 0; for (let i=0;i<s.length;i++){ h=(h*31+s.charCodeAt(i))>>>0; } return h; }
 function seededShuffle(arr, seed) {
-  const a = [...arr];
-  let s = seed;
-  for (let i = a.length - 1; i > 0; i--) {
-    s = (s * 1103515245 + 12345) >>> 0;
-    const j = s % (i + 1);
-    [a[i], a[j]] = [a[j], a[i]];
-  }
+  const a=[...arr]; let s=seed;
+  for (let i=a.length-1;i>0;i--){ s=(s*1103515245+12345)>>>0; const j=s%(i+1); [a[i],a[j]]=[a[j],a[i]]; }
   return a;
 }
 
 function analyzeJob(job) {
   const text = (job.title + " " + job.description).toLowerCase();
-  const matched = [];
-  const unmatched = [];
+  const matched = []; const unmatched = [];
   for (const skill of SKILL_TAXONOMY) {
     const hitVariant = skill.variants.find(v => text.includes(v));
     if (hitVariant) {
       const idx = text.indexOf(hitVariant);
-      const start = Math.max(0, idx - 35);
-      const end = Math.min(text.length, idx + hitVariant.length + 45);
-      let snippet = job.description ? job.description.slice(start, end).trim() : "";
-      snippet = snippet.replace(/\s+/g, " ");
-      matched.push({ label: skill.label, snippet });
-    } else {
-      unmatched.push(skill.label);
-    }
+      const start = Math.max(0, idx-35); const end = Math.min(text.length, idx+hitVariant.length+45);
+      let snippet = job.description ? job.description.slice(start,end).trim() : "";
+      matched.push({ label: skill.label, snippet: snippet.replace(/\s+/g," ") });
+    } else { unmatched.push(skill.label); }
   }
-  const score = Math.min(96, 42 + matched.length * 5);
-  const shuffledGaps = seededShuffle(unmatched, hashStr(job.id || job.title));
-  return { score, matched, gaps: shuffledGaps.slice(0, 4) };
+  const score = Math.min(96, 42 + matched.length*5);
+  const gaps = seededShuffle(unmatched, hashStr(job.id||job.title)).slice(0,4);
+  return { score, matched, gaps };
 }
 
 function atsTips(job, matched) {
@@ -180,22 +308,80 @@ function atsTips(job, matched) {
     `Mirror this job's exact title ("${job.title}") somewhere in your resume summary`,
     `Reference "${job.company}"-relevant scope (remote, cross-border, or niche hiring) in your top bullet`,
   ];
-  if (matched.length) {
-    tips.push(`This listing emphasizes ${matched.slice(0,2).map(m=>m.label).join(" and ")} — lead with those in your top 2 bullets`);
-  } else {
-    tips.push(`Use full-cycle recruitment metrics (time-to-hire, offer-acceptance %) — ATS systems favor quantified bullets`);
-  }
+  tips.push(matched.length
+    ? `This listing emphasizes ${matched.slice(0,2).map(m=>m.label).join(" and ")} — lead with those in your top 2 bullets`
+    : `Use full-cycle recruitment metrics (time-to-hire, offer-acceptance %) — ATS systems favor quantified bullets`);
   return tips;
 }
 
-function coverLetter(job, variant) {
-  const base = `Dear Hiring Team,\n\nI'm writing to apply for the ${job.title} role at ${job.company}. Over the past four years I've run full-cycle recruitment across India, the UK, US, and APAC — sourcing, screening, negotiating offers, and closing roles across technical and non-technical functions, while cutting time-to-hire by 30% and improving offer-to-joining conversion to 67%. I'm skilled in Boolean/X-Ray search, LinkedIn Recruiter, and AI-assisted sourcing, and comfortable owning requisitions independently in a remote, cross-time-zone setting.`;
-  const variants = [
-    base + `\n\nI'd welcome the opportunity to bring that ownership to ${job.company}'s hiring.\n\nBest regards,\nEgbert Vaz`,
-    base + `\n\nWhat draws me to this role specifically is the chance to apply that experience to ${job.company}'s team, and I'd be glad to discuss how I can contribute.\n\nRegards,\nEgbert Vaz`,
-    base + `\n\nI'd appreciate the chance to talk through how my sourcing and closing track record could support ${job.company}'s current hiring goals.\n\nThank you,\nEgbert Vaz`,
+// Composes a short, personal outreach note — matching how Egbert actually writes to recruiters
+// he finds on LinkedIn after applying: brief greeting by name, a line noting he's already applied,
+// one grounded paragraph tying real experience to what this specific role covers, and a warm,
+// low-pressure close. Deliberately not a formal "cover letter" structure — this is an email to a person.
+function coverLetter(job, matched, variant) {
+  const matchedLabels = matched.map(m => m.label);
+  const isIntl = matchedLabels.includes("international hiring (US/UK/APAC)");
+  const regionLine = isIntl
+    ? "which involves recruitment across international markets I've managed on a daily basis"
+    : "which lines up closely with the kind of full-cycle recruitment work I handle day to day";
+
+  const greetings = [
+    `Hi [Contact Name],\n\nI hope you are doing well.`,
+    `Hi [Contact Name],\n\nI hope you are well.`,
+    `Hi [Contact Name],\n\nHope you're doing well.`,
   ];
-  return variants[variant % variants.length];
+  const contexts = [
+    `I came across the ${job.title} opening at ${job.company} and wanted to reach out directly. I've applied through the listing, and I'm sharing my resume here as well in case it's useful.`,
+    `I just wanted to connect with you regarding the ${job.title} opening at ${job.company}. I've applied via the job post and would appreciate your input on what the role is really looking for.`,
+    `I'm reaching out about the ${job.title} role at ${job.company}, which I applied to recently. Sharing my resume directly here as well, in case that helps move things along.`,
+  ];
+  const bodies = [
+    `I strongly believe I can add value to the team and the clients you work with. I have hands-on experience managing recruitment end to end, tracking metrics, and working across the recruitment platforms this role calls for, ${regionLine}. Recruitment has always been genuinely fulfilling work for me — connecting the right people with the right opportunities, and contributing to the company's growth along the way.`,
+    `I can relate closely to what this role involves. I've previously worked with account managers, handled recruiting metrics, met deadlines under pressure, and managed candidates end to end — ${regionLine}. It's a part of the job I've always found rewarding, helping people land where they actually fit.`,
+  ];
+  const closes = [
+    `It would be great to speak with you and the hiring team to understand expectations for the role and how I could contribute. Looking forward to your thoughts.`,
+    `I'd welcome the chance to learn more about what you're looking for here, and to be considered for the role. Let me know your thoughts whenever's convenient.`,
+    `Happy to share more detail whenever's useful — would appreciate the chance to be considered for this one.`,
+  ];
+
+  return `${greetings[variant % greetings.length]}\n\n${contexts[variant % contexts.length]}\n\n${bodies[variant % bodies.length]}\n\n${closes[variant % closes.length]}\n\nBest regards,\nEgbert Vaz`;
+}
+
+// Builds a single-column, ATS-safe resume tailored to this job: reorders skill groups and
+// experience bullets so whatever the listing matched on floats to the top. Nothing is added
+// or removed — only emphasis and order change, so it stays fully truthful to the real resume.
+function buildResumeHTML(job, matched) {
+  const matchedLabels = matched.map(m => m.label);
+  const skillGroups = [...RESUME_DATA.skillGroups].sort((a,b) =>
+    (matchedLabels.includes(b.tag)?1:0) - (matchedLabels.includes(a.tag)?1:0));
+  const skillsLine = skillGroups.flatMap(g => g.items).join(" · ");
+
+  const summary = `${RESUME_DATA.summaryBase} Applying for the ${job.title} role at ${job.company}, with particular strength in ${matchedLabels.slice(0,3).join(", ") || "full-cycle recruitment and sourcing"}.`;
+
+  const expHtml = RESUME_DATA.experience.map(exp => {
+    const bullets = [...exp.bullets].sort((a,b) =>
+      (b.tags.some(t=>matchedLabels.includes(t))?1:0) - (a.tags.some(t=>matchedLabels.includes(t))?1:0));
+    return `
+      <div class="r-role"><span>${exp.title}</span><span>${exp.dates}</span></div>
+      ${exp.company ? `<div class="r-company">${exp.company}</div>` : ""}
+      <ul>${bullets.map(b => `<li>${b.text}</li>`).join("")}</ul>`;
+  }).join("");
+
+  return `
+    <h1>${RESUME_DATA.name}</h1>
+    <div class="r-contact">${RESUME_DATA.contact}</div>
+    <h2>Summary</h2>
+    <p>${summary}</p>
+    <h2>Core Competencies</h2>
+    <p>${skillsLine}</p>
+    <h2>Professional Experience</h2>
+    ${expHtml}
+    <h2>Education</h2>
+    <p>${RESUME_DATA.education}</p>
+    <h2>Licenses &amp; Certifications</h2>
+    <ul>${RESUME_DATA.certifications.map(c=>`<li>${c}</li>`).join("")}</ul>
+  `;
 }
 
 function matchesCategory(job) {
@@ -204,95 +390,194 @@ function matchesCategory(job) {
 }
 
 function renderFilters() {
-  const el = document.getElementById("filters");
-  el.innerHTML = "";
+  const el = document.getElementById("filters"); el.innerHTML = "";
   CATEGORIES.forEach(c => {
     const b = document.createElement("button");
-    b.className = "chip" + (activeCategory === c ? " active" : "");
+    b.className = "chip" + (activeCategory===c ? " active":"");
     b.textContent = c;
-    b.onclick = () => { activeCategory = c; renderFilters(); renderJobs(); };
+    b.onclick = () => { activeCategory=c; renderFilters(); renderJobs(); };
     el.appendChild(b);
   });
 }
 
 function saveJobMeta(id, patch) {
-  const key = "egbert-job-tracker";
-  const store = JSON.parse(localStorage.getItem(key) || "{}");
+  const store = JSON.parse(localStorage.getItem("egbert-job-tracker") || "{}");
   store[id] = { ...(store[id]||{}), ...patch };
-  localStorage.setItem(key, JSON.stringify(store));
+  localStorage.setItem("egbert-job-tracker", JSON.stringify(store));
   updateTiles();
 }
 function getJobMeta(id) {
-  const key = "egbert-job-tracker";
-  const store = JSON.parse(localStorage.getItem(key) || "{}");
-  return store[id] || { status: "New", notes: "" };
+  const store = JSON.parse(localStorage.getItem("egbert-job-tracker") || "{}");
+  return store[id] || { status:"New", notes:"" };
+}
+function saveLetterText(id, text) {
+  const store = JSON.parse(localStorage.getItem("egbert-letters") || "{}");
+  store[id] = text;
+  localStorage.setItem("egbert-letters", JSON.stringify(store));
+}
+function getLetterText(id) {
+  const store = JSON.parse(localStorage.getItem("egbert-letters") || "{}");
+  return store[id] || null;
+}
+function saveResumeHTML(id, html) {
+  const store = JSON.parse(localStorage.getItem("egbert-resumes") || "{}");
+  store[id] = html;
+  localStorage.setItem("egbert-resumes", JSON.stringify(store));
+}
+function getResumeHTML(id) {
+  const store = JSON.parse(localStorage.getItem("egbert-resumes") || "{}");
+  return store[id] || null;
+}
+
+function getManualJobs() {
+  return JSON.parse(localStorage.getItem("egbert-manual-jobs") || "[]");
+}
+function saveManualJobs(jobs) {
+  localStorage.setItem("egbert-manual-jobs", JSON.stringify(jobs));
+}
+function submitManualJob() {
+  const title = document.getElementById("manualTitle").value.trim();
+  const company = document.getElementById("manualCompany").value.trim();
+  const website = document.getElementById("manualWebsite").value.trim().replace(/^https?:\/\//,"").replace(/\/$/,"");
+  const url = document.getElementById("manualUrl").value.trim();
+  const description = document.getElementById("manualDesc").value.trim();
+  const errEl = document.getElementById("manualError");
+  if (!title || !company || !description) { errEl.style.display = "block"; return; }
+  errEl.style.display = "none";
+
+  const job = {
+    id: `manual-${hashStr(title+company+Date.now())}`,
+    title, company, website: website || null,
+    location: "Remote", url: url || (website ? `https://${website}` : "#"),
+    postedAt: new Date().toISOString(), source: "Manual", description,
+  };
+  const manual = getManualJobs();
+  manual.unshift(job);
+  saveManualJobs(manual);
+
+  document.getElementById("manualTitle").value = "";
+  document.getElementById("manualCompany").value = "";
+  document.getElementById("manualWebsite").value = "";
+  document.getElementById("manualUrl").value = "";
+  document.getElementById("manualDesc").value = "";
+  document.getElementById("manualForm").classList.remove("open");
+
+  renderJobs();
+  setTimeout(() => jumpToJob(job.id), 100);
+}
+function removeManualJob(id) {
+  saveManualJobs(getManualJobs().filter(j => j.id !== id));
+  renderJobs();
+}
+function getDisplayJobs() {
+  const combined = [...getManualJobs(), ...currentJobs];
+  combined.sort((x,y) => {
+    const dx = x.postedAt ? new Date(x.postedAt).getTime() : 0;
+    const dy = y.postedAt ? new Date(y.postedAt).getTime() : 0;
+    return dy - dx;
+  });
+  return combined;
+}
+function resolveDomain(job) {
+  if (job.website) return job.website;
+  return guessDomain(job.company);
+}
+function markAllSeen() {
+  const ids = currentJobs.map(j => j.id);
+  localStorage.setItem("egbert-seen-ids", JSON.stringify(ids));
+  updateBell();
+  document.getElementById("bellPanel").classList.remove("open");
+  renderJobs();
+}
+function toggleBell() { document.getElementById("bellPanel").classList.toggle("open"); }
+
+function updateBell() {
+  const seen = getSeenIds();
+  const unseen = getDisplayJobs().filter(j => !seen.has(j.id) && j.source !== "Manual");
+  const badge = document.getElementById("bellBadge");
+  if (unseen.length > 0) { badge.style.display="flex"; badge.textContent = unseen.length; }
+  else { badge.style.display="none"; }
+  const listEl = document.getElementById("bellList");
+  listEl.innerHTML = unseen.length === 0
+    ? `<div class="bell-empty">No new listings since you last checked.</div>`
+    : unseen.map(j => `<div class="bell-item" onclick="jumpToJob('${j.id}')"><b>${j.title}</b>${j.company} · ${j.source}</div>`).join("");
+}
+function jumpToJob(id) {
+  document.getElementById("bellPanel").classList.remove("open");
+  const el = document.querySelector(`[data-job-id="${id}"]`);
+  if (el) { el.scrollIntoView({behavior:"smooth", block:"center"}); el.querySelector(".body").classList.add("open"); }
 }
 
 function updateTiles() {
-  document.getElementById("tileNewNum").textContent = currentJobs.length;
+  const all = getDisplayJobs();
+  document.getElementById("tileNewNum").textContent = all.length;
   const store = JSON.parse(localStorage.getItem("egbert-job-tracker") || "{}");
-  const appliedCount = Object.values(store).filter(v => v.status === "Applied" || v.status === "Interviewing").length;
+  const appliedCount = Object.values(store).filter(v => v.status==="Applied"||v.status==="Interviewing").length;
   document.getElementById("tileAppliedNum").textContent = appliedCount;
-  document.getElementById("tileAppliedSub").textContent = `of ${currentJobs.length} tracked`;
-  const scores = currentJobs.map(j => analyzeJob(j).score);
+  document.getElementById("tileAppliedSub").textContent = `of ${all.length} tracked`;
+  const scores = all.map(j => analyzeJob(j).score);
   const avg = scores.length ? Math.round(scores.reduce((a,b)=>a+b,0)/scores.length) : 0;
-  const c = 2 * Math.PI * 21;
+  const c = 2*Math.PI*21;
   const ring = document.getElementById("avgRingFg");
   ring.setAttribute("stroke-dasharray", c);
-  ring.setAttribute("stroke-dashoffset", c - (avg/100) * c);
+  ring.setAttribute("stroke-dashoffset", c-(avg/100)*c);
 }
 
 function gaugeSvg(score) {
-  const color = score >= 80 ? "#1FB894" : score >= 60 ? "#D8A93B" : "#E8607A";
-  const c = 2 * Math.PI * 18;
-  const offset = c - (score/100) * c;
+  const color = score>=80?"#1FB894":score>=60?"#D8A93B":"#E8607A";
+  const c=2*Math.PI*18; const offset=c-(score/100)*c;
   return `<svg width="44" height="44" viewBox="0 0 44 44">
     <circle cx="22" cy="22" r="18" fill="none" stroke="#EEF0F6" stroke-width="5"/>
     <circle cx="22" cy="22" r="18" fill="none" stroke="${color}" stroke-width="5"
       stroke-dasharray="${c}" stroke-dashoffset="${offset}" stroke-linecap="round" transform="rotate(-90 22 22)"/>
   </svg>`;
 }
-
 function guessDomain(company) {
   if (!company) return null;
-  const stripWords = ["private","limited","pvt","ltd","inc","llc","llp","group","solutions","consultants","consulting","technologies","technology","services","india","global"];
-  let name = company.toLowerCase();
-  stripWords.forEach(w => { name = name.replace(new RegExp(`\\b${w}\\b`, "g"), ""); });
-  name = name.replace(/[^a-z0-9]/g, "").trim();
-  if (!name) return null;
-  return `${name}.com`;
+  const stripWords=["private","limited","pvt","ltd","inc","llc","llp","group","solutions","consultants","consulting","technologies","technology","services","india","global"];
+  let name=company.toLowerCase();
+  stripWords.forEach(w=>{ name=name.replace(new RegExp(`\\b${w}\\b`,"g"),""); });
+  name=name.replace(/[^a-z0-9]/g,"").trim();
+  return name ? `${name}.com` : null;
 }
 
 function renderJobs() {
   const listEl = document.getElementById("jobList");
-  const filtered = currentJobs.filter(matchesCategory);
-  updateTiles();
+  const seen = getSeenIds();
+  const filtered = getDisplayJobs().filter(matchesCategory);
+  updateTiles(); updateBell();
   if (filtered.length === 0) {
-    listEl.innerHTML = `<div class="empty">Nothing in this category right now. The feed checks again next hour.</div>`;
+    listEl.innerHTML = `<div class="empty">Nothing in this category right now. The feed checks every 15 minutes.</div>`;
     return;
   }
   listEl.innerHTML = "";
   filtered.forEach((job, idx) => {
     const { score, matched, gaps } = analyzeJob(job);
     const meta = getJobMeta(job.id);
+    const isManual = job.source === "Manual";
+    const isNew = !isManual && !seen.has(job.id);
     const card = document.createElement("div");
     card.className = "card";
-    const linkedinUrl = `https://www.linkedin.com/search/results/people/?keywords=${encodeURIComponent(job.company + " talent acquisition")}`;
-    const googleFallback = `https://www.google.com/search?q=${encodeURIComponent('"' + job.title + '" "' + job.company + '" job')}`;
+    card.setAttribute("data-job-id", job.id);
+    const linkedinUrl = `https://www.linkedin.com/search/results/people/?keywords=${encodeURIComponent(job.company+" talent acquisition")}`;
+    const googleFallback = `https://www.google.com/search?q=${encodeURIComponent('"'+job.title+'" "'+job.company+'" job')}`;
     const fullDesc = job.description || "No description available.";
     const isLong = fullDesc.length > 420;
-    const shortDesc = isLong ? fullDesc.slice(0, 420) + "…" : fullDesc;
-    const initial = (job.company || "?").trim().charAt(0).toUpperCase();
-    const avatarClass = AVATAR_CLASSES[idx % 3];
-    const domain = guessDomain(job.company);
+    const shortDesc = isLong ? fullDesc.slice(0,420)+"…" : fullDesc;
+    const initial = (job.company||"?").trim().charAt(0).toUpperCase();
+    const avatarClass = AVATAR_CLASSES[idx%3];
+    const domain = resolveDomain(job);
     const logoUrl = domain ? `https://logo.clearbit.com/${domain}` : null;
+    const hunterUrl = domain ? `https://hunter.io/search/${domain}` : null;
+    const savedLetter = getLetterText(job.id);
+    const initialLetter = savedLetter || coverLetter(job, matched, 0);
+    const savedResume = getResumeHTML(job.id);
+    const initialResume = savedResume || buildResumeHTML(job, matched);
 
     const positivesHtml = matched.length
-      ? matched.slice(0,4).map(m => `<li><b>${m.label}</b>${m.snippet ? ` — "…${m.snippet}…"` : ""}</li>`).join("")
-      : `<li>No strong keyword overlap detected — this may be a stretch role or the description is thin. Worth a closer manual read before applying.</li>`;
-    const gapsHtml = gaps.length
-      ? gaps.map(g => `<li>${g}</li>`).join("")
-      : `<li>No notable gaps — strong overlap with your resume.</li>`;
+      ? matched.slice(0,4).map(m => `<li><b>${m.label}</b>${m.snippet?` — "…${m.snippet}…"`:""}</li>`).join("")
+      : `<li>No strong keyword overlap detected — may be a stretch role, or the description is thin. Worth a manual read before applying.</li>`;
+    const gapsHtml = gaps.length ? gaps.map(g=>`<li>${g}</li>`).join("") : `<li>No notable gaps — strong overlap with your resume.</li>`;
 
     card.innerHTML = `
       <div class="card-head" onclick="this.nextElementSibling.classList.toggle('open')">
@@ -301,10 +586,11 @@ function renderJobs() {
           ${logoUrl ? `<img src="${logoUrl}" alt="" onerror="this.remove()" />` : ""}
         </div>
         <div style="flex:1; min-width:0">
-          <div class="titlebar"><h3>${job.title}</h3><span class="tag">Remote</span></div>
+          <div class="titlebar"><h3>${job.title}</h3><span class="tag">Remote</span>${isNew?`<span class="tag newtag">New</span>`:""}${isManual?`<span class="tag" style="background:var(--purple-tint)">Manual</span>`:""}</div>
           <div class="subrow">
             <span><b>${job.company}</b></span>
-            <span>${job.location || "Remote"}</span>
+            ${domain ? `<a href="https://${domain}" target="_blank" rel="noopener" style="color:var(--blue);font-weight:600;text-decoration:none">${domain} ↗</a>` : ""}
+            <span>${job.location||"Remote"}</span>
             <span>${job.postedAt ? new Date(job.postedAt).toLocaleDateString() : "date unverified"} · ${job.source}</span>
           </div>
         </div>
@@ -315,55 +601,65 @@ function renderJobs() {
         <div class="status-row">
           <label style="font-size:12px;color:var(--ink-soft);font-weight:700">Status</label>
           <select onchange="saveJobMeta('${job.id}', {status:this.value})">
-            ${["New","Saved","Applied","Interviewing","Rejected"].map(s =>
-              `<option value="${s}" ${meta.status===s?"selected":""}>${s}</option>`).join("")}
+            ${["New","Saved","Applied","Interviewing","Rejected","Not Applicable"].map(s=>`<option value="${s}" ${meta.status===s?"selected":""}>${s}</option>`).join("")}
           </select>
           <div class="link-row">
-            <a class="src-link" href="${job.url}" target="_blank" rel="noopener">View source ↗</a>
-            <a class="fallback-link" href="${googleFallback}" target="_blank" rel="noopener">If that fails, search it ↗</a>
+            ${job.url && job.url !== "#" ? `<a class="src-link" href="${job.url}" target="_blank" rel="noopener">View source ↗</a>` : ""}
+            ${!isManual ? `<a class="fallback-link" href="${googleFallback}" target="_blank" rel="noopener">If that fails, search it ↗</a>` : ""}
+            ${isManual ? `<button class="fallback-link" style="border:1px solid var(--border);cursor:pointer" onclick="removeManualJob('${job.id}')">Remove this entry</button>` : ""}
           </div>
         </div>
-        <div class="tabs">
-          <button class="tab-btn active" data-tab="overview">Overview</button>
-          <button class="tab-btn" data-tab="match">Match</button>
-          <button class="tab-btn" data-tab="letter">Cover Letter</button>
-          <button class="tab-btn" data-tab="ats">ATS Tips</button>
-          <button class="tab-btn" data-tab="contacts">Contacts</button>
-          <button class="tab-btn" data-tab="notes">Notes</button>
-        </div>
-        <div class="tabpane active" data-pane="overview">
-          <p class="desc-text short-desc">${shortDesc}</p>
-          <p class="desc-text full-desc" style="display:none">${fullDesc}</p>
-          ${isLong ? `<button class="readmore-btn">Read full description ↓</button>` : ""}
-        </div>
-        <div class="tabpane" data-pane="match">
-          <div class="cols">
-            <div>
-              <span class="section-label">✓ What matches</span>
-              <ul class="plain pos">${positivesHtml}</ul>
+        <div class="detail-grid">
+          <div class="tabs">
+            <button class="tab-btn active" data-tab="overview">Overview</button>
+            <button class="tab-btn" data-tab="match">Match</button>
+            <button class="tab-btn" data-tab="resume">Resume</button>
+            <button class="tab-btn" data-tab="letter">Cover Letter</button>
+            <button class="tab-btn" data-tab="ats">ATS Tips</button>
+            <button class="tab-btn" data-tab="contacts">Contacts</button>
+            <button class="tab-btn" data-tab="notes">Notes</button>
+          </div>
+          <div>
+            <div class="tabpane active" data-pane="overview">
+              <p class="desc-text short-desc">${shortDesc}</p>
+              <p class="desc-text full-desc" style="display:none">${fullDesc}</p>
+              ${isLong ? `<button class="readmore-btn">Read full description ↓</button>` : ""}
             </div>
-            <div>
-              <span class="section-label">✗ Gaps</span>
-              <ul class="plain gap">${gapsHtml}</ul>
+            <div class="tabpane" data-pane="match">
+              <div class="cols">
+                <div><span class="section-label">✓ What matches</span><ul class="plain pos">${positivesHtml}</ul></div>
+                <div><span class="section-label">✗ Gaps</span><ul class="plain gap">${gapsHtml}</ul></div>
+              </div>
+            </div>
+            <div class="tabpane" data-pane="resume">
+              <div class="resume-toolbar">
+                <span class="section-label" style="margin:0">Tailored resume — editable</span>
+                <div><button class="btn ghost retailor">↻ Re-tailor</button> <button class="btn pdf-btn">⬇ Download PDF</button></div>
+              </div>
+              <div class="resume-doc" contenteditable="true">${initialResume}</div>
+              <div class="resume-note">Skills and bullets are reordered to surface what this listing asks for first — nothing is invented or removed. Edit directly above; it saves automatically. PDF export uses your browser's print function so the text stays real and ATS-readable, not an image.</div>
+            </div>
+            <div class="tabpane" data-pane="letter">
+              <div class="letter-actions">
+                <span class="section-label" style="margin:0">Editable draft</span>
+                <div><button class="btn ghost regen">↻ Regenerate</button> <button class="btn ghost copy">Copy</button></div>
+              </div>
+              <textarea class="letter-box">${initialLetter}</textarea>
+              <div class="letter-note">Composed from your real metrics, matched to this listing — edit freely, it saves automatically. Not a live AI rewrite (a public static site can't safely hold an API key); regenerate cycles through different angles.</div>
+            </div>
+            <div class="tabpane" data-pane="ats"><ul class="plain pos">${atsTips(job,matched).map(t=>`<li>${t}</li>`).join("")}</ul></div>
+            <div class="tabpane" data-pane="contacts">
+              <p class="desc-text" style="margin-bottom:12px">No fabricated names or emails, ever — these are live search tools you use yourself, nothing gets scraped or stored.</p>
+              <div class="link-row">
+                <a class="btn" href="${linkedinUrl}" target="_blank" rel="noopener" style="text-decoration:none">Search "${job.company}" TA team on LinkedIn ↗</a>
+                ${hunterUrl ? `<a class="btn ghost" href="${hunterUrl}" target="_blank" rel="noopener" style="text-decoration:none">Find email pattern on Hunter.io ↗</a>` : ""}
+              </div>
+              <p class="resume-note" style="margin-top:14px">Hunter.io shows known email patterns for ${domain||"this company's domain"} for free, no account needed for basic results. Employee headcount isn't something I can pull for free without a paid data provider (Apollo, PDL, etc.) — happy to wire one in if you want to sign up for a key, but I won't guess a number. Also worth knowing: if we ever auto-fetch real people's names/emails into this feed, that data would sit in a public file anyone with the link could see — so for now this stays as live tools you click yourself, not stored data.</p>
+            </div>
+            <div class="tabpane" data-pane="notes">
+              <textarea placeholder="Notes — who you contacted, interview dates, follow-ups…" style="min-height:70px" onchange="saveJobMeta('${job.id}', {notes:this.value})">${meta.notes||""}</textarea>
             </div>
           </div>
-        </div>
-        <div class="tabpane" data-pane="letter">
-          <div style="display:flex;justify-content:space-between;margin-bottom:10px;align-items:center">
-            <span class="section-label" style="margin:0">Variant <span class="vnum">1</span> of 3</span>
-            <div><button class="btn ghost regen">↻ Regenerate</button> <button class="btn ghost copy">Copy</button></div>
-          </div>
-          <pre class="letter">${coverLetter(job,0)}</pre>
-        </div>
-        <div class="tabpane" data-pane="ats">
-          <ul class="plain pos">${atsTips(job, matched).map(t=>`<li>${t}</li>`).join("")}</ul>
-        </div>
-        <div class="tabpane" data-pane="contacts">
-          <p class="desc-text" style="margin-bottom:12px">No fabricated names or emails — search LinkedIn directly for real recruiters at ${job.company}:</p>
-          <a class="btn" href="${linkedinUrl}" target="_blank" rel="noopener" style="text-decoration:none;display:inline-block">Search "${job.company}" on LinkedIn</a>
-        </div>
-        <div class="tabpane" data-pane="notes">
-          <textarea placeholder="Notes — who you contacted, interview dates, follow-ups…" onchange="saveJobMeta('${job.id}', {notes:this.value})">${meta.notes || ""}</textarea>
         </div>
       </div>`;
 
@@ -389,36 +685,58 @@ function renderJobs() {
     }
 
     let vi = 0;
-    const letterPre = card.querySelector(".letter");
-    const vnum = card.querySelector(".vnum");
+    const letterBox = card.querySelector(".letter-box");
+    letterBox.addEventListener("change", () => saveLetterText(job.id, letterBox.value));
     card.querySelector(".regen").addEventListener("click", () => {
-      vi = (vi + 1) % 3;
-      letterPre.textContent = coverLetter(job, vi);
-      vnum.textContent = vi + 1;
+      vi++;
+      const text = coverLetter(job, matched, vi);
+      letterBox.value = text;
+      saveLetterText(job.id, text);
     });
     card.querySelector(".copy").addEventListener("click", () => {
-      navigator.clipboard?.writeText(letterPre.textContent);
+      navigator.clipboard?.writeText(letterBox.value);
+    });
+
+    const resumeDoc = card.querySelector(".resume-doc");
+    resumeDoc.addEventListener("input", () => saveResumeHTML(job.id, resumeDoc.innerHTML));
+    card.querySelector(".retailor").addEventListener("click", () => {
+      const html = buildResumeHTML(job, matched);
+      resumeDoc.innerHTML = html;
+      saveResumeHTML(job.id, html);
+    });
+    card.querySelector(".pdf-btn").addEventListener("click", () => {
+      const printArea = document.getElementById("resumePrintArea");
+      printArea.innerHTML = `<div class="resume-doc">${resumeDoc.innerHTML}</div>`;
+      window.print();
     });
 
     listEl.appendChild(card);
   });
 }
 
-async function loadJobs(manual) {
+async function loadJobs() {
+  const btn = document.getElementById("reloadBtn");
+  btn.classList.add("loading");
   document.getElementById("updatedAt").textContent = "syncing…";
   try {
     const res = await fetch("./jobs.json?_=" + Date.now());
     const data = await res.json();
     currentJobs = data.jobs || [];
     document.getElementById("updatedAt").textContent =
-      `Last synced ${new Date(data.updatedAt).toLocaleString()} · ${currentJobs.length} results · auto-refreshes hourly`;
+      `Last synced ${new Date(data.updatedAt).toLocaleString()} · ${currentJobs.length} results · newest first · refreshes every 15 min`;
     renderJobs();
   } catch (e) {
     document.getElementById("updatedAt").textContent = "Sync failed — feed not reachable yet";
     currentJobs = [];
     renderJobs();
+  } finally {
+    setTimeout(() => btn.classList.remove("loading"), 400);
   }
 }
+
+document.addEventListener("click", (e) => {
+  if (!e.target.closest(".bell-wrap")) document.getElementById("bellPanel").classList.remove("open");
+});
 
 renderFilters();
 loadJobs();
