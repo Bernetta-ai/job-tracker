@@ -1,4 +1,6 @@
 import { writeFile, readFile } from "node:fs/promises";
+import { JSDOM } from "jsdom";
+import { Readability } from "@mozilla/readability";
 
 const ADZUNA_APP_ID = process.env.ADZUNA_APP_ID;
 const ADZUNA_APP_KEY = process.env.ADZUNA_APP_KEY;
@@ -40,6 +42,40 @@ function withinRecency(dateStr, days = RECENCY_DAYS) {
   return posted >= cutoff;
 }
 
+// Fetches the real job posting page and pulls the main article text, the same
+// technique browser "reader mode" uses. Only worth trying for sources whose
+// API gives a short snippet (Adzuna/Jooble) — Remotive/RemoteOK/WWR already
+// return full text. Fails gracefully: any error or thin/garbled result falls
+// back to the original snippet rather than showing something broken.
+async function tryExtractFullDescription(url) {
+  if (!url) return null;
+  try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 8000);
+    const res = await fetch(url, {
+      signal: controller.signal,
+      headers: { "User-Agent": "Mozilla/5.0 (compatible; job-tracker-bot/1.0)" },
+      redirect: "follow",
+    });
+    clearTimeout(timeout);
+    if (!res.ok) return null;
+    const html = await res.text();
+    if (!html || html.length < 200) return null;
+
+    const dom = new JSDOM(html, { url: res.url });
+    const reader = new Readability(dom.window.document);
+    const article = reader.parse();
+    if (!article?.textContent) return null;
+
+    const text = article.textContent.replace(/\s+/g, " ").trim();
+    // Sanity checks: too short means extraction likely failed or hit a bot-block page.
+    if (text.length < 200) return null;
+    return text.slice(0, 6000);
+  } catch (err) {
+    return null;
+  }
+}
+
 async function fetchRemotive() {
   const jobs = [];
   try {
@@ -54,6 +90,7 @@ async function fetchRemotive() {
         location: j.candidate_required_location || "Remote", url: j.url,
         postedAt: j.publication_date || null, source: "Remotive",
         description: (j.description || "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim().slice(0, 4000),
+        descriptionExtracted: false,
       });
     }
   } catch (err) { console.error("Remotive fetch failed:", err.message); }
@@ -76,6 +113,7 @@ async function fetchRemoteOK() {
         location: loc || "Remote", url: j.url || `https://remoteok.com/l/${j.id}`,
         postedAt: j.date || null, source: "RemoteOK",
         description: (j.description || "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim().slice(0, 4000),
+        descriptionExtracted: false,
       });
     }
   } catch (err) { console.error("RemoteOK fetch failed:", err.message); }
@@ -101,13 +139,14 @@ async function fetchWeWorkRemotely() {
         title: rest.join(":").trim() || title, company: company.trim(),
         location: "Remote", url: link.trim(), postedAt: pubDate || null, source: "WeWorkRemotely",
         description: desc.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim().slice(0, 4000),
+        descriptionExtracted: false,
       });
     }
   } catch (err) { console.error("WeWorkRemotely fetch failed:", err.message); }
   return jobs;
 }
 
-async function fetchAdzuna() {
+async function fetchAdzuna(alreadySeenIds) {
   const jobs = [];
   if (!ADZUNA_APP_ID || !ADZUNA_APP_KEY) { console.log("Adzuna skipped: no credentials set"); return jobs; }
   const queries = ["recruiter", "talent acquisition", "sourcing specialist"];
@@ -118,13 +157,26 @@ async function fetchAdzuna() {
       const data = await res.json();
       for (const j of data.results || []) {
         if (!titleMatches(j.title)) continue;
+        const id = `adzuna-${j.id}`;
         const job = {
-          id: `adzuna-${j.id}`, title: j.title, company: j.company?.display_name || "Unknown",
+          id, title: j.title, company: j.company?.display_name || "Unknown",
           location: j.location?.display_name || "India", url: j.redirect_url,
           postedAt: j.created || null, source: "Adzuna",
           description: (j.description || "").trim().slice(0, 4000),
+          descriptionExtracted: false,
         };
         if (!isActuallyRemote(job)) continue;
+
+        // Only attempt full-text extraction for genuinely new listings — keeps
+        // each run fast, since previously-seen jobs already have whatever
+        // description they were assigned on first sight.
+        if (!alreadySeenIds.has(id)) {
+          const full = await tryExtractFullDescription(job.url);
+          if (full && full.length > job.description.length) {
+            job.description = full;
+            job.descriptionExtracted = true;
+          }
+        }
         jobs.push(job);
       }
     } catch (err) { console.error(`Adzuna fetch failed for "${q}":`, err.message); }
@@ -132,7 +184,7 @@ async function fetchAdzuna() {
   return jobs;
 }
 
-async function fetchJooble() {
+async function fetchJooble(alreadySeenIds) {
   const jobs = [];
   if (!JOOBLE_API_KEY) { console.log("Jooble skipped: no API key set"); return jobs; }
   const queries = ["recruiter", "talent acquisition", "IT recruiter"];
@@ -147,13 +199,22 @@ async function fetchJooble() {
         if (!titleMatches(j.title)) continue;
         if (!locationLooksOk(j.location || "")) continue;
         if (!withinRecency(j.updated)) continue;
+        const id = `jooble-${Buffer.from(j.link || j.title + j.company).toString("base64").slice(0, 16)}`;
         const job = {
-          id: `jooble-${Buffer.from(j.link || j.title + j.company).toString("base64").slice(0, 16)}`,
-          title: j.title, company: j.company || "Unknown", location: j.location || "India",
+          id, title: j.title, company: j.company || "Unknown", location: j.location || "India",
           url: j.link, postedAt: j.updated || null, source: "Jooble",
           description: (j.snippet || "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim().slice(0, 4000),
+          descriptionExtracted: false,
         };
         if (!isActuallyRemote(job)) continue;
+
+        if (!alreadySeenIds.has(id)) {
+          const full = await tryExtractFullDescription(job.url);
+          if (full && full.length > job.description.length) {
+            job.description = full;
+            job.descriptionExtracted = true;
+          }
+        }
         jobs.push(job);
       }
     } catch (err) { console.error(`Jooble fetch failed for "${q}":`, err.message); }
@@ -186,21 +247,18 @@ async function notifyNewJobs(newJobs) {
 }
 
 async function main() {
-  const [a, b, c, d, e] = await Promise.all([
-    fetchRemotive(), fetchRemoteOK(), fetchWeWorkRemotely(), fetchAdzuna(), fetchJooble(),
-  ]);
-  const freshAll = dedupe([...a, ...b, ...c, ...d, ...e]);
-
   let previous = [];
   try { previous = JSON.parse(await readFile("docs/jobs.json", "utf-8")).jobs || []; } catch {}
   const prevById = Object.fromEntries(previous.map((j) => [j.id, j]));
+  const alreadySeenIds = new Set(previous.map((j) => j.id));
+
+  const [a, b, c, d, e] = await Promise.all([
+    fetchRemotive(), fetchRemoteOK(), fetchWeWorkRemotely(), fetchAdzuna(alreadySeenIds), fetchJooble(alreadySeenIds),
+  ]);
+  const freshAll = dedupe([...a, ...b, ...c, ...d, ...e]);
 
   const newlyAppeared = freshAll.filter((j) => !prevById[j.id]);
 
-  // Accumulate: start from what we already had, then overlay this run's fresh
-  // results (fresher data wins for description/etc, but status/notes/firstSeenAt
-  // carry over). This means a job doesn't vanish just because one run's API
-  // calls happened to miss it — it only drops off once it genuinely ages out.
   const mergedById = { ...prevById };
   const now = new Date().toISOString();
   for (const j of freshAll) {
@@ -231,7 +289,8 @@ async function main() {
 
   const output = { updatedAt: now, count: merged.length, jobs: merged };
   await writeFile("docs/jobs.json", JSON.stringify(output, null, 2));
-  console.log(`Wrote ${merged.length} jobs to docs/jobs.json (${newlyAppeared.length} new since last run)`);
+  const extractedCount = newlyAppeared.filter((j) => j.descriptionExtracted).length;
+  console.log(`Wrote ${merged.length} jobs to docs/jobs.json (${newlyAppeared.length} new since last run, ${extractedCount} got full-text extraction)`);
 
   await notifyNewJobs(newlyAppeared);
 }
