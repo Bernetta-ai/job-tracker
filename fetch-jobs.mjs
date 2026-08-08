@@ -5,6 +5,8 @@ const ADZUNA_APP_KEY = process.env.ADZUNA_APP_KEY;
 const JOOBLE_API_KEY = process.env.JOOBLE_API_KEY;
 const NTFY_TOPIC = process.env.NTFY_TOPIC;
 
+const RECENCY_DAYS = 14;
+
 const TITLE_KEYWORDS = [
   "recruiter", "recruitment consultant", "it recruiter",
   "talent acquisition", "sourcing specialist", "sourcer",
@@ -30,12 +32,12 @@ function isActuallyRemote(job) {
   if (HYBRID_ONSITE_SIGNAL.test(text)) return false;
   return REMOTE_SIGNAL.test(job.title) || REMOTE_SIGNAL.test(job.location || "") || REMOTE_SIGNAL.test(job.description || "");
 }
-function withinLastWeek(dateStr) {
+function withinRecency(dateStr, days = RECENCY_DAYS) {
   if (!dateStr) return true;
   const posted = new Date(dateStr).getTime();
   if (Number.isNaN(posted)) return true;
-  const weekAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
-  return posted >= weekAgo;
+  const cutoff = Date.now() - days * 24 * 60 * 60 * 1000;
+  return posted >= cutoff;
 }
 
 async function fetchRemotive() {
@@ -46,7 +48,7 @@ async function fetchRemotive() {
     for (const j of data.jobs || []) {
       if (!titleMatches(j.title)) continue;
       if (!locationLooksOk(j.candidate_required_location)) continue;
-      if (!withinLastWeek(j.publication_date)) continue;
+      if (!withinRecency(j.publication_date)) continue;
       jobs.push({
         id: `remotive-${j.id}`, title: j.title, company: j.company_name,
         location: j.candidate_required_location || "Remote", url: j.url,
@@ -68,7 +70,7 @@ async function fetchRemoteOK() {
       if (!titleMatches(j.position)) continue;
       const loc = j.location || "";
       if (!locationLooksOk(loc)) continue;
-      if (!withinLastWeek(j.date)) continue;
+      if (!withinRecency(j.date)) continue;
       jobs.push({
         id: `remoteok-${j.id}`, title: j.position, company: j.company,
         location: loc || "Remote", url: j.url || `https://remoteok.com/l/${j.id}`,
@@ -92,7 +94,7 @@ async function fetchWeWorkRemotely() {
       const pubDate = (item.match(/<pubDate>(.*?)<\/pubDate>/s) || [, ""])[1];
       const desc = (item.match(/<description>(.*?)<\/description>/s) || [, ""])[1];
       if (!titleMatches(title)) continue;
-      if (!withinLastWeek(pubDate)) continue;
+      if (!withinRecency(pubDate)) continue;
       const [company, ...rest] = title.split(":");
       jobs.push({
         id: `wwr-${Buffer.from(link).toString("base64").slice(0, 12)}`,
@@ -111,7 +113,7 @@ async function fetchAdzuna() {
   const queries = ["recruiter", "talent acquisition", "sourcing specialist"];
   for (const q of queries) {
     try {
-      const url = `https://api.adzuna.com/v1/api/jobs/in/search/1?app_id=${ADZUNA_APP_ID}&app_key=${ADZUNA_APP_KEY}&what=${encodeURIComponent(q)}&results_per_page=30&max_days_old=7&content-type=application/json`;
+      const url = `https://api.adzuna.com/v1/api/jobs/in/search/1?app_id=${ADZUNA_APP_ID}&app_key=${ADZUNA_APP_KEY}&what=${encodeURIComponent(q)}&results_per_page=30&max_days_old=${RECENCY_DAYS}&content-type=application/json`;
       const res = await fetch(url);
       const data = await res.json();
       for (const j of data.results || []) {
@@ -144,7 +146,7 @@ async function fetchJooble() {
       for (const j of data.jobs || []) {
         if (!titleMatches(j.title)) continue;
         if (!locationLooksOk(j.location || "")) continue;
-        if (!withinLastWeek(j.updated)) continue;
+        if (!withinRecency(j.updated)) continue;
         const job = {
           id: `jooble-${Buffer.from(j.link || j.title + j.company).toString("base64").slice(0, 16)}`,
           title: j.title, company: j.company || "Unknown", location: j.location || "India",
@@ -187,27 +189,47 @@ async function main() {
   const [a, b, c, d, e] = await Promise.all([
     fetchRemotive(), fetchRemoteOK(), fetchWeWorkRemotely(), fetchAdzuna(), fetchJooble(),
   ]);
-  const all = dedupe([...a, ...b, ...c, ...d, ...e]);
+  const freshAll = dedupe([...a, ...b, ...c, ...d, ...e]);
 
   let previous = [];
   try { previous = JSON.parse(await readFile("docs/jobs.json", "utf-8")).jobs || []; } catch {}
   const prevById = Object.fromEntries(previous.map((j) => [j.id, j]));
 
-  const newlyAppeared = all.filter(j => !prevById[j.id]);
+  const newlyAppeared = freshAll.filter((j) => !prevById[j.id]);
 
-  const merged = all.map((j) => ({
-    ...j,
-    status: prevById[j.id]?.status || "New",
-    notes: prevById[j.id]?.notes || "",
-  }));
+  // Accumulate: start from what we already had, then overlay this run's fresh
+  // results (fresher data wins for description/etc, but status/notes/firstSeenAt
+  // carry over). This means a job doesn't vanish just because one run's API
+  // calls happened to miss it — it only drops off once it genuinely ages out.
+  const mergedById = { ...prevById };
+  const now = new Date().toISOString();
+  for (const j of freshAll) {
+    const prev = prevById[j.id];
+    mergedById[j.id] = {
+      ...j,
+      status: prev?.status || "New",
+      notes: prev?.notes || "",
+      firstSeenAt: prev?.firstSeenAt || now,
+    };
+  }
+  for (const id in mergedById) {
+    if (!mergedById[id].firstSeenAt) mergedById[id].firstSeenAt = now;
+  }
+
+  const cutoff = Date.now() - RECENCY_DAYS * 24 * 60 * 60 * 1000;
+  const merged = Object.values(mergedById).filter((j) => {
+    const postedTime = j.postedAt ? new Date(j.postedAt).getTime() : NaN;
+    const refTime = !Number.isNaN(postedTime) ? postedTime : new Date(j.firstSeenAt).getTime();
+    return refTime >= cutoff;
+  });
 
   merged.sort((x, y) => {
-    const dx = x.postedAt ? new Date(x.postedAt).getTime() : 0;
-    const dy = y.postedAt ? new Date(y.postedAt).getTime() : 0;
+    const dx = x.postedAt ? new Date(x.postedAt).getTime() : new Date(x.firstSeenAt).getTime();
+    const dy = y.postedAt ? new Date(y.postedAt).getTime() : new Date(y.firstSeenAt).getTime();
     return dy - dx;
   });
 
-  const output = { updatedAt: new Date().toISOString(), count: merged.length, jobs: merged };
+  const output = { updatedAt: now, count: merged.length, jobs: merged };
   await writeFile("docs/jobs.json", JSON.stringify(output, null, 2));
   console.log(`Wrote ${merged.length} jobs to docs/jobs.json (${newlyAppeared.length} new since last run)`);
 
