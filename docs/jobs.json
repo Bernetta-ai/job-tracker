@@ -1,6 +1,6 @@
 {
-  "updatedAt": "2026-08-08T01:05:46.201Z",
-  "count": 26,
+  "updatedAt": "2026-08-08T03:18:48.680Z",
+  "count": 25,
   "jobs": [
     {
       "id": "adzuna-5831403121",
@@ -47,6 +47,18 @@
       "postedAt": "2026-08-04T20:47:37Z",
       "source": "Adzuna",
       "description": "Job Description: Job Purpose The Talent Acquisition team's mission is to attract, engage, and secure the right talent to drive sustainable business growth. This role sits within the Talent Acquisition team that partners with an external RPO provider. Our RPO partner manages high-volume recruitment for our Field Sales teams and Plant Operations (Operators & Maintenance Technicians). As a Talent Acquisition Coordinator, you will work hand-in-hand with external recruiters to ensure a smooth, fast,…",
+      "status": "New",
+      "notes": ""
+    },
+    {
+      "id": "adzuna-5832798226",
+      "title": "Talent Acquisition Intern",
+      "company": "Coditas Technologies",
+      "location": "Pune, Maharashtra",
+      "url": "https://www.adzuna.in/details/5832798226?utm_medium=api&utm_source=b49c532b",
+      "postedAt": "2026-08-08T07:31:10Z",
+      "source": "Adzuna",
+      "description": "We are hiring a Talent Acquisition Intern for our Pune location. This role offers a stipend between 12000 to 13500 per month with a service agreement of 18 months (6 months internship  12 months as Full Time Employee .) Role & responsibilities: Manage end-to-end recruitment life cycle Source candidates from various platforms matching desired skills Design and update job descriptions for existing profiles Identify effective recruitment sources to close open positions Proactively engage in recrui…",
       "status": "New",
       "notes": ""
     },
@@ -135,6 +147,18 @@
       "notes": ""
     },
     {
+      "id": "adzuna-5832800996",
+      "title": "Talent Acquisition Specialist",
+      "company": "Gensler",
+      "location": "Bangalore, Karnataka",
+      "url": "https://www.adzuna.in/details/5832800996?utm_medium=api&utm_source=b49c532b",
+      "postedAt": "2026-08-08T07:34:36Z",
+      "source": "Adzuna",
+      "description": "Your Role: Gensler is one of the world's leading architecture, design and planning firms, with staff in locations around the world. Our work reflects an enduring commitment to sustainability and the belief that design is one of the most powerful strategic tools for securing a lasting competitive advantage. At Gensler, you will join a highly creative, collaborative team dedicated to innovative problem solving and design excellence. Gensler Bangalore is seeking a Talent Acquisition Specialist for…",
+      "status": "New",
+      "notes": ""
+    },
+    {
       "id": "adzuna-5825577572",
       "title": "Talent Acquisition Executive",
       "company": "SIONIQ - JOS",
@@ -143,42 +167,6 @@
       "postedAt": "2026-08-02T15:57:25Z",
       "source": "Adzuna",
       "description": "Job Summary We are looking for a proactive and enthusiastic Talent Acquisition Executive to support end-to-end recruitment activities. The role involves sourcing candidates, coordinating interviews, maintaining recruitment trackers, and ensuring a smooth candidate experience while helping meet the organization's hiring requirements. Key Responsibilities Source candidates through job portals, LinkedIn, social media, employee referrals, and other recruitment channels. Screen resumes and shortlist…",
-      "status": "New",
-      "notes": ""
-    },
-    {
-      "id": "adzuna-5832197088",
-      "title": "Talent Acquisition Analyst",
-      "company": "PepsiCo",
-      "location": "Hyderabad, Telangana",
-      "url": "https://www.adzuna.in/details/5832197088?utm_medium=api&utm_source=b49c532b",
-      "postedAt": "2026-08-07T21:39:02Z",
-      "source": "Adzuna",
-      "description": "Overview As a Professional Recruiter focused on professional hiring, you will play a key role in attracting, assessing, and hiring top talent for PepsiCo. You will collaborate with hiring managers, HR business partners, and stakeholders to develop and execute strategic hiring plans while ensuring a seamless and engaging candidate experience. This role requires a blend of strategic talent sourcing, stakeholder management, employer branding, data driven decision-making, and process excellence exp…",
-      "status": "New",
-      "notes": ""
-    },
-    {
-      "id": "adzuna-5832712407",
-      "title": "Talent Acquisition sales",
-      "company": "Capture Art",
-      "location": "Mumbai, Maharashtra",
-      "url": "https://www.adzuna.in/details/5832712407?utm_medium=api&utm_source=b49c532b",
-      "postedAt": "2026-08-08T05:39:46Z",
-      "source": "Adzuna",
-      "description": "Key responsibilities ● Talent management and acquisition ● Coordination and negotiations ● Systematic lead tracking and sales pipeline management ● Lead acquisition ● Pitch decks, proposals, and meeting coordination ● Business development support ● Data management and process improvement We’re looking for someone who is ● Smart and resourceful ● Strong Operational Skills. ● Proactive and highly organized ● Comfortable using AI tools for efficiency. ● Team Player ● A strong communicator ● Based …",
-      "status": "New",
-      "notes": ""
-    },
-    {
-      "id": "adzuna-5832197227",
-      "title": "Talent Acquisition Specialist",
-      "company": "Bechtel Corporation",
-      "location": "Vadodara, Gujarat",
-      "url": "https://www.adzuna.in/details/5832197227?utm_medium=api&utm_source=b49c532b",
-      "postedAt": "2026-08-07T21:39:05Z",
-      "source": "Adzuna",
-      "description": "Requisition ID: 295164 Relocation Authorized: None Telework Type: Full-Time Office/Project Work Location: Vadodara Extraordinary Teams Building Inspiring Projects Since 1898, we have helped customers complete more than 25,000 projects in 160 countries on all seven continents that have created jobs, grown economies, improved the resiliency of the world's infrastructure, increased access to energy, resources, and vital services, and made the world a safer, cleaner place. Differentiated by the qua…",
       "status": "New",
       "notes": ""
     },
