@@ -42,13 +42,14 @@ function withinRecency(dateStr, days = RECENCY_DAYS) {
   return posted >= cutoff;
 }
 
-// Fetches the real job posting page and pulls the main article text, the same
-// technique browser "reader mode" uses. Only worth trying for sources whose
-// API gives a short snippet (Adzuna/Jooble) — Remotive/RemoteOK/WWR already
-// return full text. Fails gracefully: any error or thin/garbled result falls
-// back to the original snippet rather than showing something broken.
-async function tryExtractFullDescription(url) {
-  if (!url) return null;
+// First attempt: fetch the page ourselves and run Readability locally (fast,
+// works for server-rendered pages). If that fails or returns something too
+// thin (JS-heavy pages, bot-blocked pages, etc.), fall back to Jina AI's free
+// Reader service, which renders the page through a real browser on their end
+// — this succeeds in some cases where our own direct fetch fails or is
+// blocked, since it's coming from a different network/environment than
+// either your browser or this script's own request.
+async function tryReadabilityExtract(url) {
   try {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 8000);
@@ -68,12 +69,38 @@ async function tryExtractFullDescription(url) {
     if (!article?.textContent) return null;
 
     const text = article.textContent.replace(/\s+/g, " ").trim();
-    // Sanity checks: too short means extraction likely failed or hit a bot-block page.
     if (text.length < 200) return null;
-    return text.slice(0, 6000);
-  } catch (err) {
+    return text;
+  } catch {
     return null;
   }
+}
+
+async function tryJinaExtract(url) {
+  try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 12000);
+    const res = await fetch(`https://r.jina.ai/${url}`, {
+      signal: controller.signal,
+      headers: { "Accept": "text/plain" },
+    });
+    clearTimeout(timeout);
+    if (!res.ok) return null;
+    const text = await res.text();
+    if (!text || text.length < 200) return null;
+    return text.replace(/\s+/g, " ").trim();
+  } catch {
+    return null;
+  }
+}
+
+async function tryExtractFullDescription(url) {
+  if (!url) return null;
+  const viaReadability = await tryReadabilityExtract(url);
+  if (viaReadability) return { text: viaReadability.slice(0, 6000), method: "readability" };
+  const viaJina = await tryJinaExtract(url);
+  if (viaJina) return { text: viaJina.slice(0, 6000), method: "jina" };
+  return null;
 }
 
 async function fetchRemotive() {
@@ -171,10 +198,11 @@ async function fetchAdzuna(alreadySeenIds) {
         // each run fast, since previously-seen jobs already have whatever
         // description they were assigned on first sight.
         if (!alreadySeenIds.has(id)) {
-          const full = await tryExtractFullDescription(job.url);
-          if (full && full.length > job.description.length) {
-            job.description = full;
+          const result = await tryExtractFullDescription(job.url);
+          if (result && result.text.length > job.description.length) {
+            job.description = result.text;
             job.descriptionExtracted = true;
+            job.extractionMethod = result.method;
           }
         }
         jobs.push(job);
@@ -209,10 +237,11 @@ async function fetchJooble(alreadySeenIds) {
         if (!isActuallyRemote(job)) continue;
 
         if (!alreadySeenIds.has(id)) {
-          const full = await tryExtractFullDescription(job.url);
-          if (full && full.length > job.description.length) {
-            job.description = full;
+          const result = await tryExtractFullDescription(job.url);
+          if (result && result.text.length > job.description.length) {
+            job.description = result.text;
             job.descriptionExtracted = true;
+            job.extractionMethod = result.method;
           }
         }
         jobs.push(job);
