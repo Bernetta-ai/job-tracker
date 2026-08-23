@@ -1,6 +1,6 @@
 {
-  "updatedAt": "2026-08-23T15:58:31.685Z",
-  "count": 4,
+  "updatedAt": "2026-08-23T16:24:03.044Z",
+  "count": 3,
   "jobs": [
     {
       "id": "adzuna-5849116434",
@@ -43,20 +43,6 @@
       "status": "New",
       "notes": "",
       "firstSeenAt": "2026-08-10T10:58:37.585Z"
-    },
-    {
-      "id": "adzuna-5834572005",
-      "title": "Talent Acquisition Executive (Freelance, Remote)",
-      "company": "TalentXO",
-      "location": "India",
-      "url": "https://www.adzuna.in/land/ad/5834572005?se=WvDF8OWT8RGxc-JLXbb6SQ&utm_medium=api&utm_source=b49c532b&v=8B6D83615530F26FF36BCE5F146C056B6D2FA4D4",
-      "postedAt": "2026-08-09T16:08:45Z",
-      "source": "Adzuna",
-      "description": "Hi, Are you an experienced Sales Recruiter looking to earn more with complete flexibility? We're inviting skilled recruiters with expertise in Sales, GTM, Business Development, Account Management, Customer Success, and Revenue hiring to join TalentXO as a Freelance Recruiter . Why join TalentXO? Earn ₹50,000 to ₹1,50,000 per successful hire (average payout: ₹75,000 ) Work on your own schedule with 100% flexibility and no minimum time commitment Access to 100 active hiring mandates , including h…",
-      "descriptionExtracted": false,
-      "status": "New",
-      "notes": "",
-      "firstSeenAt": "2026-08-09T10:59:50.471Z"
     }
   ]
 }
