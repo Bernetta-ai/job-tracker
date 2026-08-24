@@ -1,6 +1,6 @@
 {
-  "updatedAt": "2026-08-24T15:38:49.393Z",
-  "count": 4,
+  "updatedAt": "2026-08-24T16:15:00.785Z",
+  "count": 3,
   "jobs": [
     {
       "id": "adzuna-5849694774",
@@ -43,20 +43,6 @@
       "status": "New",
       "notes": "",
       "firstSeenAt": "2026-08-13T11:27:49.054Z"
-    },
-    {
-      "id": "adzuna-5835509704",
-      "title": "IT & Non IT Recruiter",
-      "company": "HappieHire",
-      "location": "Tamil Nadu, India",
-      "url": "https://www.adzuna.in/land/ad/5835509704?se=VksYS7mU8RGlDuOngCclFw&utm_medium=api&utm_source=b49c532b&v=E2744DA536F72DD06A2883FE9772E7396AB81E49",
-      "postedAt": "2026-08-10T16:11:25Z",
-      "source": "Adzuna",
-      "description": "Job Title: Recruiter (IT & Non IT) Location: Remote, India. Salary: ₹18,000 - 20,000 / month (plus incentives) Employment type: Full-time, 6 working days About the Role: We are seeking a proactive and detail-oriented (IT & Non IT) Recruiter to join our growing Talent Acquisition team. This role is focused on sourcing, attracting, and hiring top-tier technology professionals across various white-collar domains such as software development, data science, cybersecurity, IT infrastructure, and syst…",
-      "descriptionExtracted": false,
-      "status": "New",
-      "notes": "",
-      "firstSeenAt": "2026-08-10T10:58:37.585Z"
     }
   ]
 }
