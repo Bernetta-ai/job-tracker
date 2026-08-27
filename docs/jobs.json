@@ -1,6 +1,6 @@
 {
-  "updatedAt": "2026-08-27T05:48:43.945Z",
-  "count": 3,
+  "updatedAt": "2026-08-27T17:06:19.361Z",
+  "count": 2,
   "jobs": [
     {
       "id": "adzuna-5849694774",
@@ -29,20 +29,6 @@
       "status": "New",
       "notes": "",
       "firstSeenAt": "2026-08-21T02:12:43.254Z"
-    },
-    {
-      "id": "adzuna-5840224741",
-      "title": "US IT Recruiter",
-      "company": "Themesoft Inc.",
-      "location": "India",
-      "url": "https://www.adzuna.in/land/ad/5840224741?se=yvpMuA-X8RGQXPOI4cUHbQ&utm_medium=api&utm_source=b49c532b&v=A1929429A6CD67B946866C7079B86E4F72390808",
-      "postedAt": "2026-08-13T16:19:06Z",
-      "source": "Adzuna",
-      "description": "Job Description: Job Title: US IT Recruiter. Employment Type: Full-Time. Location: Chennai, TN. 100% Remote. Experience: 3 – 7 Years. Work Hours: US Shift - CST Hours - 7.30 pm -4.30 am. About the Role: We are looking for an experienced and highly motivated US IT Recruiter to join our recruitment team. The ideal candidate will have strong experience in end-to-end US IT recruitment, excellent sourcing skills, and a solid understanding of US staffing processes, work authorizations, and employment…",
-      "descriptionExtracted": false,
-      "status": "New",
-      "notes": "",
-      "firstSeenAt": "2026-08-13T11:27:49.054Z"
     }
   ]
 }
