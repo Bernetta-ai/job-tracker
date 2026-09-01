@@ -1,6 +1,6 @@
 {
-  "updatedAt": "2026-08-31T23:23:22.935Z",
-  "count": 10,
+  "updatedAt": "2026-09-01T01:55:04.510Z",
+  "count": 9,
   "jobs": [
     {
       "id": "adzuna-5860533544",
@@ -127,20 +127,6 @@
       "status": "New",
       "notes": "",
       "firstSeenAt": "2026-08-31T06:09:22.467Z"
-    },
-    {
-      "id": "jooble-aHR0cHM6Ly9qb29i",
-      "title": "Technical Recruiter - APAC",
-      "company": "Sardine",
-      "location": "India",
-      "url": "https://jooble.org/jdp/-2076007727097112518",
-      "postedAt": "2026-08-18T00:00:00.0000000",
-      "source": "Jooble",
-      "description": "&nbsp;...the Bay Area, NYC, Austin, Toronto, and São Paulo. However, we maintain a remote-first work culture. #WorkFromAnywhere We hire talented, self-motivated individuals with extreme ownership and high growth orientation. We value performance and not hours worked. We believe...&nbsp;",
-      "descriptionExtracted": false,
-      "status": "New",
-      "notes": "",
-      "firstSeenAt": "2026-08-28T01:28:47.461Z"
     }
   ]
 }
