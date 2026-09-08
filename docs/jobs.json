@@ -1,13 +1,13 @@
 {
-  "updatedAt": "2026-09-08T04:55:23.088Z",
-  "count": 6,
+  "updatedAt": "2026-09-08T09:15:19.122Z",
+  "count": 5,
   "jobs": [
     {
       "id": "adzuna-5865288649",
       "title": "Talent Acquisition Specialist – US IT Recruitment",
       "company": "Objectways",
       "location": "Chennai, Tamil Nadu",
-      "url": "https://www.adzuna.in/land/ad/5865288649?se=0FK1fkGr8RGsJNkd9qy0NQ&utm_medium=api&utm_source=b49c532b&v=80BC042831703B9D0A3E404E89A6939C7B4820AB",
+      "url": "https://www.adzuna.in/land/ad/5865288649?se=YHKgzmWr8RGiif024VXTiQ&utm_medium=api&utm_source=b49c532b&v=80BC042831703B9D0A3E404E89A6939C7B4820AB",
       "postedAt": "2026-09-02T02:22:49Z",
       "source": "Adzuna",
       "description": "Job Title: Talent Acquisition Specialist Location: Chennai (Remote) Experience: 2 Years Employment Type: Full-time Work Timing: US EST Shift / Night Shift About the Role: We are looking for a Talent Acquisition Specialist with a minimum of 2 years of hands-on experience in US IT Recruitment . The ideal candidate should have a strong understanding of the US recruitment process, excellent sourcing and candidate management skills, and be comfortable working in US EST shift timings . Key Responsibi…",
@@ -71,20 +71,6 @@
       "status": "New",
       "notes": "",
       "firstSeenAt": "2026-08-28T23:02:03.633Z"
-    },
-    {
-      "id": "adzuna-5854850597",
-      "title": "Talent Acquisition Intern",
-      "company": "Crescare Solutions",
-      "location": "India",
-      "url": "https://www.adzuna.in/details/5854850597?utm_medium=api&utm_source=b49c532b",
-      "postedAt": "2026-08-25T07:18:49Z",
-      "source": "Adzuna",
-      "description": "Crescare Solutions is hiring for Talent Acquisition Intern Talent Acquisition Intern Position: Talent Acquisition Intern Internship Duration: 3 Months Work Mode: Completely Work From Home Shift Timing: 12:00 PM – 8:00 PM Working Hours: 7 hours per day  1-hour break, 5.5 dys working, Sun fixed off, Alternate sat off. Stipend: Performance-Based | Payable Upon Successful Completion of 3 Months About the Role We are looking for a highly enthusiastic, energetic, and driven Talent Acquisition Intern …",
-      "descriptionExtracted": false,
-      "status": "New",
-      "notes": "",
-      "firstSeenAt": "2026-08-28T01:28:47.461Z"
     }
   ]
 }
