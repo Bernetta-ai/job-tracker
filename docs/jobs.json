@@ -1,6 +1,6 @@
 {
-  "updatedAt": "2026-09-11T04:34:04.497Z",
-  "count": 7,
+  "updatedAt": "2026-09-11T09:08:02.857Z",
+  "count": 5,
   "jobs": [
     {
       "id": "adzuna-5876872793",
@@ -72,34 +72,6 @@
       "status": "New",
       "notes": "",
       "firstSeenAt": "2026-08-30T16:57:23.404Z"
-    },
-    {
-      "id": "adzuna-5859083974",
-      "title": "Talent Acquisition Intern",
-      "company": "Devdort",
-      "location": "India",
-      "url": "https://www.adzuna.in/details/5859083974?utm_medium=api&utm_source=b49c532b",
-      "postedAt": "2026-08-28T07:15:48Z",
-      "source": "Adzuna",
-      "description": "Job Title: HR Recruiter/ Talent Acquistion Intern Location: Permanent Work From Home (WFH) Stipend: ₹5,000 per month  Incentives (3 months Internship) Duration: 3 Months Internship (with opportunity to convert into full-time role) Timings: 10:00 AM – 7:30 PM | Monday to Saturday About Us Devdort Consultants LLP is a fast-growing recruitment agency, helping businesses close their most critical and tough-to-fill roles with speed and precision. We pride ourselves on being problem-solvers, connecto…",
-      "descriptionExtracted": false,
-      "status": "New",
-      "notes": "",
-      "firstSeenAt": "2026-08-30T16:57:23.404Z"
-    },
-    {
-      "id": "adzuna-5859054158",
-      "title": "Recruiter",
-      "company": "Pavago",
-      "location": "India",
-      "url": "https://www.adzuna.in/details/5859054158?utm_medium=api&utm_source=b49c532b",
-      "postedAt": "2026-08-28T06:29:01Z",
-      "source": "Adzuna",
-      "description": "Recruiter / Talent Acquisition Specialist – Sourcing & Full-Cycle Recruiting | Remote Position Type: Full-Time, Remote Working Hours: U.S. Business Hours About the Role At Pavago, one of our clients is hiring an experienced Recruiter / Talent Acquisition Specialist to manage recruitment processes from candidate sourcing through the offer stage. This is a hands-on recruiting role for someone who can proactively identify talent, engage passive candidates, conduct effective screening interviews, a…",
-      "descriptionExtracted": false,
-      "status": "New",
-      "notes": "",
-      "firstSeenAt": "2026-08-30T22:04:32.604Z"
     }
   ]
 }
