@@ -1,13 +1,13 @@
 {
-  "updatedAt": "2026-09-12T06:30:14.592Z",
-  "count": 6,
+  "updatedAt": "2026-09-12T11:08:39.939Z",
+  "count": 5,
   "jobs": [
     {
       "id": "adzuna-5880064414",
       "title": "US IT Sourcing Specialist",
       "company": "Elegant Enterprise-Wide Solutions, Inc.",
       "location": "India",
-      "url": "https://www.adzuna.in/land/ad/5880064414?se=ktdOaXOu8RGMr-jPEQM2Iw&utm_medium=api&utm_source=b49c532b&v=24F7CF22F30855C780F581B53A066D93896552F0",
+      "url": "https://www.adzuna.in/land/ad/5880064414?se=zFDBTpqu8RGc0Oz0i8Ru1A&utm_medium=api&utm_source=b49c532b&v=24F7CF22F30855C780F581B53A066D93896552F0",
       "postedAt": "2026-09-12T01:04:48Z",
       "source": "Adzuna",
       "description": "Job Title: Senior Talent Sourcer – US IT Staffing Location: Remote (India) Experience: 4–6 Years Shift Timing: 6 pm to 3 am IST Note: US IT sourcing experience is must, people with domestic/APEX/UAE or any other country apart from US experience will not be shortlisted. Should have worked on W2, 1099 and C2C Tax Terms in US Staffing Environment About the Role We are looking for someone who genuinely enjoys sourcing and takes pride in identifying the right candidates. This is not a traditional re…",
@@ -72,20 +72,6 @@
       "status": "New",
       "notes": "",
       "firstSeenAt": "2026-09-01T22:01:47.416Z"
-    },
-    {
-      "id": "adzuna-5860533544",
-      "title": "Talent Acquisition Specialist",
-      "company": "Binary Semantics Limited",
-      "location": "Gurgaon, Haryana",
-      "url": "https://www.adzuna.in/details/5860533544?utm_medium=api&utm_source=b49c532b",
-      "postedAt": "2026-08-29T07:39:51Z",
-      "source": "Adzuna",
-      "description": "Greetings! We urgently need Talent Acquisition Professional to work from Gurgaon office (No Remote) Experience: Fresher or 0-4 years in both IT & Non IT Hiring Fresher need to sign Service Agreement for 1 year. Salary: For Fresher -17k Stipend for 1 year For 1-4 years ; CTC: 2.5 LPA- 5.5 LPA ( 10% Variable included) Gender: Any Communication & Recruitment Skill should be Good. Mode of Interview : F2F in Gurgaon office Work Location: Need to work from Gurgaon Office ( 5 Days in a week) (Day Shif…",
-      "descriptionExtracted": false,
-      "status": "New",
-      "notes": "",
-      "firstSeenAt": "2026-08-30T16:57:23.404Z"
     }
   ]
 }
