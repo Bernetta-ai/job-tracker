@@ -1,6 +1,6 @@
 {
-  "updatedAt": "2026-09-22T12:35:54.663Z",
-  "count": 5,
+  "updatedAt": "2026-09-22T17:16:11.844Z",
+  "count": 4,
   "jobs": [
     {
       "id": "adzuna-5889222422",
@@ -35,7 +35,7 @@
       "title": "US IT Sourcing Specialist",
       "company": "Elegant Enterprise-Wide Solutions, Inc.",
       "location": "India",
-      "url": "https://www.adzuna.in/land/ad/5880064414?se=Bozc8YG28RG_ufLnE1x16Q&utm_medium=api&utm_source=b49c532b&v=24F7CF22F30855C780F581B53A066D93896552F0",
+      "url": "https://www.adzuna.in/land/ad/5880064414?se=FpvyTqm28RGv4q9XZ2bJfw&utm_medium=api&utm_source=b49c532b&v=24F7CF22F30855C780F581B53A066D93896552F0",
       "postedAt": "2026-09-12T01:04:48Z",
       "source": "Adzuna",
       "description": "Job Title: Senior Talent Sourcer – US IT Staffing Location: Remote (India) Experience: 4–6 Years Shift Timing: 6 pm to 3 am IST Note: US IT sourcing experience is must, people with domestic/APEX/UAE or any other country apart from US experience will not be shortlisted. Should have worked on W2, 1099 and C2C Tax Terms in US Staffing Environment About the Role We are looking for someone who genuinely enjoys sourcing and takes pride in identifying the right candidates. This is not a traditional re…",
@@ -58,20 +58,6 @@
       "status": "New",
       "notes": "",
       "firstSeenAt": "2026-09-09T10:06:13.230Z"
-    },
-    {
-      "id": "adzuna-5875448286",
-      "title": "Global Talent Sourcing Specialist",
-      "company": "Cloudstaff",
-      "location": "Bangalore, Karnataka",
-      "url": "https://www.adzuna.in/details/5875448286?utm_medium=api&utm_source=b49c532b",
-      "postedAt": "2026-09-08T16:11:58Z",
-      "source": "Adzuna",
-      "description": "We’re Hiring: Global Talent Sourcing Specialist Looking for a role that fosters collaboration, creativity and career growth in a vibrant office environment? We got you covered! We are currently on the lookout for a Global Talent Sourcing Specialist to join our team at Cloudstaff, the 1 workplace everywhere! Think you qualify for the role? Attach a 1-2 minute video intro and introduce yourself to us so we can meet you virtually. Attach this together with your updated CV to become a priority appl…",
-      "descriptionExtracted": false,
-      "status": "New",
-      "notes": "",
-      "firstSeenAt": "2026-09-09T05:33:54.385Z"
     }
   ]
 }
