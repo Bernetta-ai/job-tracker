@@ -1,6 +1,6 @@
 {
-  "updatedAt": "2026-09-26T15:02:07.388Z",
-  "count": 6,
+  "updatedAt": "2026-09-26T18:34:33.565Z",
+  "count": 5,
   "jobs": [
     {
       "id": "adzuna-5896614021",
@@ -66,7 +66,7 @@
       "title": "Technical Recruitment Consultant — Sourcing & Delivery Support",
       "company": "Humres - Construction Recruitment Specialists",
       "location": "India",
-      "url": "https://www.adzuna.in/land/ad/5889222422?se=FA-POru58RGGQ9u1mQKVdw&utm_medium=api&utm_source=b49c532b&v=65A10296DB016E3E26A2471961B6ED0438C74359",
+      "url": "https://www.adzuna.in/land/ad/5889222422?se=xBG66di58RG3jpCv9xpWmA&utm_medium=api&utm_source=b49c532b&v=65A10296DB016E3E26A2471961B6ED0438C74359",
       "postedAt": "2026-09-18T17:31:08Z",
       "source": "Adzuna",
       "description": "Technical Recruitment Consultant — Sourcing & Delivery Support Location: Remote (Anywhere in India) Working hours: 8:30 AM – 6:00 PM UK time (Monday to Friday) Reports to: Managing Director Type: Full-time Salary: Competitive, dependent on experience About the Role We are a specialist sales recruitment business operating across Construction, industrial, manufacturing, and technical sectors. We are looking for an experienced technical recruitment consultant to work directly alongside our Managin…",
@@ -74,20 +74,6 @@
       "status": "New",
       "notes": "",
       "firstSeenAt": "2026-09-18T14:34:54.002Z"
-    },
-    {
-      "id": "adzuna-5880953270",
-      "title": "US IT Recruiter/ Operations Consultant",
-      "company": "TechZSoft LLC",
-      "location": "India",
-      "url": "https://www.adzuna.in/land/ad/5880953270?se=7s_BJJ-v8RG-FLx_YfIXKQ&utm_medium=api&utm_source=b49c532b&v=9F6E1116557B24B0F41136E3766CA1D93A468EA9",
-      "postedAt": "2026-09-12T17:21:14Z",
-      "source": "Adzuna",
-      "description": "Job Title: US IT Operations Consultant (India) for US-based Company Location: Remote (India) Work Hours: US CST hours We are seeking a highly skilled Operations Consultant to manage the operational activities of our US-based company from India. This role will focus on a broad range of functions, including recruitment, bench sales, employee onboarding, contract management, invoicing, and QuickBooks administration. The ideal candidate will be a well-rounded professional with experience in HR, sal…",
-      "descriptionExtracted": false,
-      "status": "New",
-      "notes": "",
-      "firstSeenAt": "2026-09-13T06:11:59.561Z"
     }
   ]
 }
