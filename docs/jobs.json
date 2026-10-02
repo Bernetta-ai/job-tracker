@@ -1,6 +1,6 @@
 {
-  "updatedAt": "2026-10-02T19:39:59.134Z",
-  "count": 12,
+  "updatedAt": "2026-10-02T23:14:50.944Z",
+  "count": 11,
   "jobs": [
     {
       "id": "adzuna-5904146951",
@@ -160,20 +160,6 @@
       "status": "New",
       "notes": "",
       "firstSeenAt": "2026-09-23T11:53:34.629Z"
-    },
-    {
-      "id": "adzuna-5889347947",
-      "title": "HR Recruiter",
-      "company": "CuringBusy",
-      "location": "Kalsi, Dehradun",
-      "url": "https://www.adzuna.in/details/5889347947?utm_medium=api&utm_source=b49c532b",
-      "postedAt": "2026-09-18T19:47:47Z",
-      "source": "Adzuna",
-      "description": "This is a remote position. Job Title: HR Recruiter Location: Remote Company: CuringBusy About CuringBusy CuringBusy is a fully remote company providing subscription-based Virtual Assistant services to busy entrepreneurs, business owners, and professionals across the globe. We help entrepreneurs free up their time by outsourcing everyday administrative work and other business tasks. Job Summary We are looking for a proactive and people-oriented HR Recruiter to join our team. The HR Recruiter wil…",
-      "descriptionExtracted": false,
-      "status": "New",
-      "notes": "",
-      "firstSeenAt": "2026-10-01T00:16:02.790Z"
     }
   ]
 }
