@@ -1,7 +1,22 @@
 {
-  "updatedAt": "2026-10-03T12:44:07.644Z",
-  "count": 11,
+  "updatedAt": "2026-10-03T16:44:30.139Z",
+  "count": 12,
   "jobs": [
+    {
+      "id": "jooble-aHR0cHM6Ly9qb29i",
+      "title": "US Pharma Recruiter Based in India",
+      "company": "IT Engagements",
+      "location": "India",
+      "url": "https://jooble.org/desc/4166735962328205331",
+      "postedAt": "2026-10-02T00:00:00.0000000",
+      "source": "Jooble",
+      "description": "Title: Just a moment... URL Source: https://jooble.org/desc/4166735962328205331 Warning: This page maybe requiring CAPTCHA, please make sure you are authorized to access this page. Markdown Content: ![Image 1: Icon for jooble.org](https://jooble.org/favicon.ico) ## jooble.org ## Performing security verification This website uses a security service to protect against malicious bots. This page is displayed while the website verifies you are not a bot.",
+      "descriptionExtracted": true,
+      "extractionMethod": "jina",
+      "status": "New",
+      "notes": "",
+      "firstSeenAt": "2026-10-03T16:44:30.139Z"
+    },
     {
       "id": "adzuna-5904146951",
       "title": "Freelancing Recruiter",
