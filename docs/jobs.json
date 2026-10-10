@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-10T07:23:04.312Z",
+  "updatedAt": "2026-10-10T13:53:40.694Z",
   "count": 8,
   "jobs": [
     {
@@ -43,20 +43,6 @@
       "status": "New",
       "notes": "",
       "firstSeenAt": "2026-10-06T13:28:21.058Z"
-    },
-    {
-      "id": "jooble-aHR0cHM6Ly9qb29i",
-      "title": "US Pharma Recruiter Based in India",
-      "company": "IT Engagements",
-      "location": "India",
-      "url": "https://jooble.org/desc/6203659926772958391",
-      "postedAt": "2026-10-02T00:00:00.0000000",
-      "source": "Jooble",
-      "description": "&nbsp;...Greetings from IT Engagements Urgent Hiring | We are Hiring: US Pharma Recruiter Based in India Location: 100% Remote in India Only Shift: US Night Shift Experience: 2 5 Years We are looking for an experienced US Pharma Recruiter...&nbsp;",
-      "descriptionExtracted": false,
-      "status": "New",
-      "notes": "",
-      "firstSeenAt": "2026-10-03T16:44:30.139Z"
     },
     {
       "id": "adzuna-5904146951",
@@ -113,6 +99,20 @@
       "status": "New",
       "notes": "",
       "firstSeenAt": "2026-09-28T18:08:45.968Z"
+    },
+    {
+      "id": "jooble-aHR0cHM6Ly9qb29i",
+      "title": "Senior Product Manager - Recruiter Experience (India)",
+      "company": "Karat",
+      "location": "India",
+      "url": "https://jooble.org/jdp/-6190963675961621868",
+      "postedAt": "2026-09-27T00:00:00.0000000",
+      "source": "Jooble",
+      "description": "&nbsp;...Back to jobs New Senior Product Manager - Recruiter Experience (India) Remote (India - Bangalore ONLY) Apply We're Karat , the world's largest interviewing company. Karat is transforming organizations around the world. We provide a powerful system for technical leaders...&nbsp;",
+      "descriptionExtracted": false,
+      "status": "New",
+      "notes": "",
+      "firstSeenAt": "2026-10-03T16:44:30.139Z"
     }
   ]
 }
