@@ -1,6 +1,6 @@
 {
-  "updatedAt": "2026-10-10T01:24:00.442Z",
-  "count": 9,
+  "updatedAt": "2026-10-10T07:23:04.312Z",
+  "count": 8,
   "jobs": [
     {
       "id": "adzuna-5919839880",
@@ -113,20 +113,6 @@
       "status": "New",
       "notes": "",
       "firstSeenAt": "2026-09-28T18:08:45.968Z"
-    },
-    {
-      "id": "adzuna-5899028832",
-      "title": "Talent Acquisition Specialist",
-      "company": "Devdort",
-      "location": "India",
-      "url": "https://www.adzuna.in/details/5899028832?utm_medium=api&utm_source=b49c532b",
-      "postedAt": "2026-09-26T07:08:58Z",
-      "source": "Adzuna",
-      "description": "About the Opportunity A fast-scaling tech-driven recruitment innovation lab operating across India, we’re reimagining talent acquisition for high-growth startups and enterprise tech teams. We combine data-driven sourcing, AI-powered screening, and human-first engagement strategies to build pipelines faster, reduce time-to-hire, and elevate candidate experience—all while staying 100% remote and agile. You’ll be at the core of our mission to transform hiring into a strategic, scalable, and candid…",
-      "descriptionExtracted": false,
-      "status": "New",
-      "notes": "",
-      "firstSeenAt": "2026-09-27T14:17:07.454Z"
     }
   ]
 }
