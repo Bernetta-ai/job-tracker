@@ -1,7 +1,21 @@
 {
-  "updatedAt": "2026-10-12T06:30:27.593Z",
-  "count": 8,
+  "updatedAt": "2026-10-12T16:05:38.521Z",
+  "count": 7,
   "jobs": [
+    {
+      "id": "jooble-aHR0cHM6Ly9qb29i",
+      "title": "US Pharma Recruiter Based in India",
+      "company": "IT Engagements",
+      "location": "India",
+      "url": "https://jooble.org/jdp/2595720458606078471",
+      "postedAt": "2026-10-10T00:00:00.0000000",
+      "source": "Jooble",
+      "description": "&nbsp;...Greetings from IT Engagements Urgent Hiring | We are Hiring: US Pharma Recruiter Based in India Location: 100% Remote in India Only Shift: US Night Shift Experience: 2 5 Years We are looking for an experienced US Pharma Recruiter...&nbsp;",
+      "descriptionExtracted": false,
+      "status": "New",
+      "notes": "",
+      "firstSeenAt": "2026-10-03T16:44:30.139Z"
+    },
     {
       "id": "adzuna-5919839880",
       "title": "Talent Acquisition Lead",
@@ -15,20 +29,6 @@
       "status": "New",
       "notes": "",
       "firstSeenAt": "2026-10-09T04:11:56.912Z"
-    },
-    {
-      "id": "jooble-aHR0cHM6Ly9qb29i",
-      "title": "US Pharma Recruiter Based in India",
-      "company": "IT Engagements",
-      "location": "India",
-      "url": "https://jooble.org/jdp/-5993909828812888110",
-      "postedAt": "2026-10-09T00:00:00.0000000",
-      "source": "Jooble",
-      "description": "&nbsp;...Greetings from IT Engagements Urgent Hiring | We are Hiring: US Pharma Recruiter Based in India Location: 100% Remote in India Only Shift: US Night Shift Experience: 2 5 Years We are looking for an experienced US Pharma Recruiter...&nbsp;",
-      "descriptionExtracted": false,
-      "status": "New",
-      "notes": "",
-      "firstSeenAt": "2026-10-03T16:44:30.139Z"
     },
     {
       "id": "wwr-aHR0cHM6Ly93",
@@ -99,20 +99,6 @@
       "status": "New",
       "notes": "",
       "firstSeenAt": "2026-09-30T03:02:29.432Z"
-    },
-    {
-      "id": "adzuna-5901424892",
-      "title": "Talent Acquisition Manager",
-      "company": "Weekday AI",
-      "location": "India",
-      "url": "https://www.adzuna.in/details/5901424892?utm_medium=api&utm_source=b49c532b",
-      "postedAt": "2026-09-28T14:36:33Z",
-      "source": "Adzuna",
-      "description": "This role is for one of Weekday’s clients Salary range: Rs 1500000 - Rs 1800000 (ie INR 15 - 18 LPA) Min Experience: 10 years Location: Remote (India) JobType: full-time We are seeking a strategic Talent Acquisition Leader to build, scale, and mature our hiring function for a fast‑growing autonomous drone defense and AI‑powered product organization . This role designs a scalable Talent Acquisition engine that supports rapid growth, evolving capability needs, and mission‑critical hiring across t…",
-      "descriptionExtracted": false,
-      "status": "New",
-      "notes": "",
-      "firstSeenAt": "2026-09-28T18:08:45.968Z"
     }
   ]
 }
