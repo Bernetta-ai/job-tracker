@@ -1,6 +1,6 @@
 {
-  "updatedAt": "2026-10-23T23:59:53.666Z",
-  "count": 5,
+  "updatedAt": "2026-10-24T03:51:13.810Z",
+  "count": 4,
   "jobs": [
     {
       "id": "adzuna-5938356322",
@@ -57,20 +57,6 @@
       "status": "New",
       "notes": "",
       "firstSeenAt": "2026-09-27T08:32:51.198Z"
-    },
-    {
-      "id": "jooble-aHR0cHM6Ly9qb29i",
-      "title": "US Pharma Recruiter Based in India",
-      "company": "IT Engagements",
-      "location": "India",
-      "url": "https://jooble.org/jdp/2595720458606078471",
-      "postedAt": "2026-10-10T00:00:00.0000000",
-      "source": "Jooble",
-      "description": "&nbsp;...Greetings from IT Engagements Urgent Hiring | We are Hiring: US Pharma Recruiter Based in India Location: 100% Remote in India Only Shift: US Night Shift Experience: 2 5 Years We are looking for an experienced US Pharma Recruiter...&nbsp;",
-      "descriptionExtracted": false,
-      "status": "New",
-      "notes": "",
-      "firstSeenAt": "2026-10-03T16:44:30.139Z"
     }
   ]
 }
