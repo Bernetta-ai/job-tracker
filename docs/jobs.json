@@ -1,7 +1,22 @@
 {
-  "updatedAt": "2026-11-12T16:56:12.110Z",
+  "updatedAt": "2026-11-12T22:31:12.582Z",
   "count": 5,
   "jobs": [
+    {
+      "id": "adzuna-5963566026",
+      "title": "IT Recruiter",
+      "company": "preferable.ai",
+      "location": "Kochi, Ernakulam",
+      "url": "https://www.adzuna.in/details/5963566026?utm_medium=api&utm_source=b49c532b",
+      "postedAt": "2026-11-13T00:49:43Z",
+      "source": "Adzuna",
+      "description": "❮ back to last search preferable.ai kochi, Kerala, India, 682001 Permanent Full time Apply for this job This is a remote position. # Junior US IT Recruiter – Recruitment & Resource Coordination **Experience:** 1–2 Years **Location:** Remote (India) **Employment Type:** Full-Time **Shift:** Flexible hours to support US business hours ### Job Description We are looking for a proactive and detail-oriented **Junior US IT Recruiter** to support our global IT Field Services projects. The primary responsibility will be sourcing, screening, and coordinating IT professionals and field engineers for US and European projects. This is a hands-on junior-level role suited for candidates with basic US IT recruitment experience who are eager to grow in international IT staffing and resource coordination. ### Key Responsibilities - Source candidates through LinkedIn, job portals, referrals, and other recruitment platforms. - Recruit for junior and mid-level IT roles, including Desktop Support, Field Service Engineers, Network Support, Data Center Technicians, and IT Support Engineers. - Screen candidates for technical skills, experience, location, availability, and work authorization. - Coordinate interviews, candidate follow-ups, selection, and onboarding. - Communicate with IT contractors, freelancers, and staffing vendors regarding availability and rates. - Maintain candidate databases, recruitment trackers, and engineer availability records. - Support resource allocation, engineer deployment, and replacement coordination. - Assist in tracking project work orders, engineer assignments, schedules, and ticket updates. - Coordinate with internal teams, candidates, and clients to ensure timely resource fulfillment. ### Required Skills & Qualifications - **1–2 years of experience in IT recruitment**, preferably US IT staffing. - Basic understanding of US IT recruitment processes and technical job requirements. - Familiarity with sourcing through LinkedIn and job portals. - Good communication, candidate engagement, and follow-up skills. - Basic knowledge of IT roles such as Desktop Support, Networking, Field Services, and Infrastructure Support. - Good working knowledge of MS Excel or Google Sheets. - Ability to multitask and manage multiple open requirements. - Willingness to work in shifts supporting US time zones. ### Preferred - Exposure to US-based candidates, IT contractors, or staffing vendors. - Basic understanding of recruitment trackers, onboarding, and resource coordination. - Familiarity with ATS or CRM tools. ### Important – Role Level **This is strictly a Junior / Individual Contributor position.** - Suitable for candidates with 1–2 years of hands-on recruitment experience. - Candidates should be comfortable with sourcing, screening, calling, follow-ups, and recruitment coordination. - This is an execution-focused role, not a team lead, managerial, or recruitment strategy position. - Candidates seeking senior-level or managerial responsibilities are not the target for this opening. Apply for this jobStats for this job Salaries The number of jobs in each salary range for all: Receive similar jobs by email By creating an alert, you agree to our T&Cs and Privacy Notice, and Cookie Use. Similar jobs Recruitment ManagerContinental Mercantile Corporation Hiring For Continental Mercantile Corporation Kochi Popular searches Back to last search Jobs ❯ Kerala ❯ Ernakulam ❯ HR & Recruitment Jobs ❯ IT Recruiter ❮ back to last search",
+      "descriptionExtracted": true,
+      "extractionMethod": "readability",
+      "status": "New",
+      "notes": "",
+      "firstSeenAt": "2026-11-12T22:31:12.582Z"
+    },
     {
       "id": "adzuna-5961109109",
       "title": "IT Recruiter",
@@ -57,20 +72,6 @@
       "status": "New",
       "notes": "",
       "firstSeenAt": "2026-10-31T18:03:39.037Z"
-    },
-    {
-      "id": "adzuna-5945935155",
-      "title": "HR / Talent Acquisition",
-      "company": "Jobgether",
-      "location": "India",
-      "url": "https://www.adzuna.in/details/5945935155?utm_medium=api&utm_source=b49c532b",
-      "postedAt": "2026-10-29T21:37:58Z",
-      "source": "Adzuna",
-      "description": "This position is listed on behalf of a partner company, who manages all applications and next steps. Our partner is looking for an HR / Talent Acquisition professional based in India. Take ownership of building and managing the people function for a growing, remote-first team. This opportunity combines hands-on human resources operations with end-to-end talent acquisition, giving you the autonomy to shape essential people processes from the ground up. You will establish practical HR policies, c…",
-      "descriptionExtracted": false,
-      "status": "New",
-      "notes": "",
-      "firstSeenAt": "2026-11-01T00:18:17.376Z"
     }
   ]
 }
