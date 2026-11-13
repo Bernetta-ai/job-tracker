@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-13T17:56:27.151Z",
+  "updatedAt": "2026-11-13T23:07:44.063Z",
   "count": 5,
   "jobs": [
     {
@@ -10,9 +10,8 @@
       "url": "https://jooble.org/jdp/-2135608796825594508",
       "postedAt": "2026-11-13T08:01:08.7600000",
       "source": "Jooble",
-      "description": "Title: Just a moment... URL Source: https://jooble.org/jdp/-2135608796825594508 Warning: This page maybe requiring CAPTCHA, please make sure you are authorized to access this page. Markdown Content: ![Image 1: Icon for jooble.org](https://jooble.org/favicon.ico) ## jooble.org ## Performing security verification This website uses a security service to protect against malicious bots. This page is displayed while the website verifies you are not a bot.",
-      "descriptionExtracted": true,
-      "extractionMethod": "jina",
+      "description": "&nbsp;...insight to guide hiring decisions, while growing into a trusted talent advisor. What you'll do Manage full-cycle searches for...&nbsp;&nbsp;...team We work in a globally distributed, remote-first Talent Acquisition team where clear communication and reliable follow-through...&nbsp;",
+      "descriptionExtracted": false,
       "status": "New",
       "notes": "",
       "firstSeenAt": "2026-11-13T17:56:27.151Z"
